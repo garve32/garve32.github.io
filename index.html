@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -17,8 +17,8 @@
             min-height: 100vh;
             padding: 4px;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            /* justify-content: center; */
+            /* align-items: center; */
             overflow: hidden;
         }
 
@@ -747,6 +747,16 @@
             updateTotal(roundNum, 's');
             updateTotal(roundNum, 'h');
         }
+
+        // 모든 입력 필드에 포커스 시 전체 선택 기능 추가
+        document.addEventListener('DOMContentLoaded', function() {
+            const allInputs = document.querySelectorAll('.score-input');
+            allInputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.select();
+                });
+            });
+        });
     </script>
 </body>
 </html>
