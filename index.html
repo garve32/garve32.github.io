@@ -139,6 +139,9 @@
       }
 
       .round-result-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 2px;
         border: 1px solid var(--line);
         border-radius: 999px;
         padding: 3px 8px;
@@ -147,6 +150,18 @@
         background: var(--p-bg, #f4f7ff);
         border-color: var(--p-border, var(--line));
         color: var(--p-text, #3352a7);
+      }
+
+      .crown-slot {
+        display: inline-block;
+        width: 1.1em;
+        text-align: center;
+        line-height: 1;
+        font-size: 12px;
+      }
+
+      .crown-slot.hidden {
+        visibility: hidden;
       }
 
       .round-result-chip.win {
@@ -178,8 +193,14 @@
       }
 
       .player-name {
-        font-size: 15px;
-        font-weight: 700;
+        font-size: 13px;
+        font-weight: 800;
+        padding: 4px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--p-border, var(--line));
+        background: var(--p-bg, #f4f7ff);
+        color: var(--p-strong, var(--text));
+        line-height: 1;
       }
 
       .player-head-right {
@@ -191,10 +212,10 @@
       .key-inline {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         border: 1px solid var(--line);
         border-radius: 999px;
-        padding: 2px 6px;
+        padding: 3px 8px;
         background: #fff;
       }
 
@@ -206,8 +227,8 @@
       }
 
       .key-inline input {
-        width: 44px;
-        min-width: 44px;
+        width: 56px;
+        min-width: 56px;
         padding: 4px 2px;
         font-size: 16px;
         border-radius: 6px;
@@ -262,7 +283,7 @@
       }
 
       .score-grid input {
-        padding: 8px 3px;
+        padding: 5px 3px;
         font-size: 16px;
       }
 
@@ -360,6 +381,7 @@
         input.step = "1";
         input.value = "0";
         input.inputMode = "numeric";
+        bindSelectAll(input);
         input.addEventListener("input", recalculate);
         return input;
       }
@@ -372,8 +394,31 @@
         input.min = "0";
         input.value = "0";
         input.inputMode = "numeric";
+        bindSelectAll(input);
         input.addEventListener("input", recalculate);
         return input;
+      }
+
+      function bindSelectAll(input) {
+        const selectAll = () => {
+          if (typeof input.select === "function") {
+            input.select();
+          }
+        };
+
+        input.addEventListener("focus", () => {
+          requestAnimationFrame(selectAll);
+        });
+
+        input.addEventListener("mouseup", (event) => {
+          event.preventDefault();
+          selectAll();
+        });
+
+        input.addEventListener("touchend", (event) => {
+          event.preventDefault();
+          selectAll();
+        });
       }
 
       function buildUI() {
@@ -388,7 +433,7 @@
 
           const title = document.createElement("h2");
           title.className = "round-title";
-          title.textContent = `${r}라운드`;
+          title.textContent = `${r}R`;
           roundHead.appendChild(title);
 
           const roundMeta = document.createElement("div");
@@ -408,7 +453,7 @@
             header.className = "player-header";
 
             const name = document.createElement("div");
-            name.className = "player-name";
+            name.className = `player-name player-theme-${p}`;
             name.textContent = `${p}P`;
 
             const headRight = document.createElement("div");
@@ -496,7 +541,16 @@
             const chip = document.createElement("span");
             const isWin = entry.score === maxScore;
             chip.className = `round-result-chip player-theme-${entry.player} ${isWin ? "win" : "lose"}`;
-            chip.textContent = `${entry.player}P ${entry.score}점${isWin ? " 👑" : ""}`;
+
+            const scoreText = document.createElement("span");
+            scoreText.textContent = `${entry.player}P ${entry.score}점`;
+
+            const crown = document.createElement("span");
+            crown.className = `crown-slot${isWin ? "" : " hidden"}`;
+            crown.textContent = "👑";
+
+            chip.appendChild(scoreText);
+            chip.appendChild(crown);
             metaEl.appendChild(chip);
           });
         });
