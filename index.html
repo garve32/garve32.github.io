@@ -1,513 +1,530 @@
 <!doctype html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>캐슬콤보 점수 계산기</title>
-  <style>
-    :root {
-      --bg: #f4f6fb;
-      --card: #ffffff;
-      --line: #d6dcea;
-      --text: #1b2333;
-      --muted: #60708b;
-      --primary: #2962f0;
-      --danger: #e24a4a;
-      --chip: #eef3ff;
-      --shadow: 0 8px 24px rgba(27, 35, 51, 0.08);
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>캐슬콤보 점수 계산기</title>
+    <style>
+      :root {
+        --bg: #f4f6fb;
+        --card: #ffffff;
+        --line: #d6dcea;
+        --text: #1b2333;
+        --muted: #60708b;
+        --primary: #2962f0;
+        --danger: #e24a4a;
+        --chip: #eef3ff;
+        --shadow: 0 8px 24px rgba(27, 35, 51, 0.08);
+      }
 
-    * {
-      box-sizing: border-box;
-    }
+      * {
+        box-sizing: border-box;
+      }
 
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      padding: 12px;
-    }
-
-    .wrap {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-
-    .title {
-      margin: 0 0 4px;
-      font-size: 24px;
-    }
-
-    .sub {
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .panel {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: var(--shadow);
-      margin-bottom: 12px;
-    }
-
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      align-items: end;
-      padding: 8px;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    label {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    select,
-    input {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px;
-      font-size: 16px;
-      background: #fff;
-      color: var(--text);
-    }
-
-    input[type="number"] {
-      text-align: center;
-      font-weight: 600;
-    }
-
-    button {
-      border: 0;
-      border-radius: 10px;
-      padding: 11px 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .controls select,
-    .controls button {
-      height: 38px;
-      padding: 6px 8px;
-      font-size: 13px;
-      border-radius: 8px;
-    }
-
-    .btn-danger {
-      background: var(--danger);
-      color: #fff;
-    }
-
-    .round-block + .round-block {
-      margin-top: 14px;
-    }
-
-    .round-title {
-      margin: 0 0 6px;
-      font-size: 16px;
-    }
-
-    .round-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .round-result-chip {
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 3px 8px;
-      font-size: 12px;
-      font-weight: 700;
-      background: var(--p-bg, #f4f7ff);
-      border-color: var(--p-border, var(--line));
-      color: var(--p-text, #3352a7);
-    }
-
-    .round-result-chip.win {
-      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
-    }
-
-    .round-result-chip.lose {
-      opacity: 0.72;
-    }
-
-    .player-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    .player-card {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 8px;
-      background: #fff;
-    }
-
-    .player-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-
-    .player-name {
-      font-size: 15px;
-      font-weight: 700;
-    }
-
-    .player-head-right {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .key-inline {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 2px 6px;
-      background: #fff;
-    }
-
-    .key-inline span {
-      font-size: 11px;
-      color: var(--muted);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .key-inline input {
-      width: 44px;
-      min-width: 44px;
-      padding: 4px 2px;
-      font-size: 13px;
-      border-radius: 6px;
-    }
-
-    .round-total-chip {
-      font-size: 14px;
-      background: var(--p-strong, #1d3f95);
-      border-radius: 99px;
-      padding: 5px 10px;
-      font-weight: 800;
-      color: var(--p-strong-text, #ffffff);
-    }
-
-    .player-theme-1 {
-      --p-bg: #ffecee;
-      --p-border: #ffb9c0;
-      --p-text: #9e1f2f;
-      --p-strong: #c52a3d;
-      --p-strong-text: #ffffff;
-    }
-
-    .player-theme-2 {
-      --p-bg: #e9f2ff;
-      --p-border: #b9d3ff;
-      --p-text: #1f56a8;
-      --p-strong: #1f56a8;
-      --p-strong-text: #ffffff;
-    }
-
-    .player-theme-3 {
-      --p-bg: #fff4e7;
-      --p-border: #ffd7a8;
-      --p-text: #9a5a00;
-      --p-strong: #b96b00;
-      --p-strong-text: #ffffff;
-    }
-
-    .player-theme-4 {
-      --p-bg: #f4ecff;
-      --p-border: #d5c0ff;
-      --p-text: #6941a3;
-      --p-strong: #6941a3;
-      --p-strong-text: #ffffff;
-    }
-
-    .score-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .score-grid input {
-      padding: 8px 3px;
-      font-size: 15px;
-    }
-
-    @media (min-width: 680px) {
       body {
-        padding: 18px;
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        padding: 12px;
+      }
+
+      .wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .title {
+        margin: 0 0 4px;
+        font-size: 24px;
+      }
+
+      .sub {
+        margin: 0 0 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 12px;
+        box-shadow: var(--shadow);
+        margin-bottom: 12px;
       }
 
       .controls {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
-      .player-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 420px) {
-      .controls {
+        display: grid;
         grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        align-items: end;
+        padding: 6px;
       }
 
-      .controls .field:last-child {
-        grid-column: 1 / -1;
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
       }
-    }
 
-    @media (min-width: 1024px) {
+      label {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      select,
+      input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 16px;
+        background: #fff;
+        color: var(--text);
+      }
+
+      input[type="number"] {
+        text-align: center;
+        font-weight: 600;
+      }
+
+      button {
+        border: 0;
+        border-radius: 10px;
+        padding: 11px 12px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .controls select,
+      .controls button {
+        height: 38px;
+        padding: 6px 8px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+      }
+
+      .round-block + .round-block {
+        margin-top: 14px;
+      }
+
+      .round-title {
+        margin: 0;
+        font-size: 16px;
+        flex: 0 0 auto;
+      }
+
+      .round-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .round-meta {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 6px;
+        margin: 0;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .round-result-chip {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: 12px;
+        font-weight: 700;
+        background: var(--p-bg, #f4f7ff);
+        border-color: var(--p-border, var(--line));
+        color: var(--p-text, #3352a7);
+      }
+
+      .round-result-chip.win {
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+      }
+
+      .round-result-chip.lose {
+        opacity: 0.72;
+      }
+
       .player-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
       }
-    }
-  </style>
-</head>
-<body>
-  <div class="wrap">
-    <h1 class="title">캐슬콤보 점수 계산기</h1>
-    <p class="sub">3x3 카드칸 점수 + 열쇠(개당 1점)를 실시간 합산합니다.</p>
 
-    <section class="panel controls">
-      <div class="field">
-        <label for="playerCount">인원수</label>
-        <select id="playerCount">
-          <option value="2" selected>2인</option>
-          <option value="3">3인</option>
-          <option value="4">4인</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="roundCount">라운드 수</label>
-        <select id="roundCount">
-          <option value="1">1라운드</option>
-          <option value="2">2라운드</option>
-          <option value="3" selected>3라운드</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>&nbsp;</label>
-        <button id="resetBtn" type="button" class="btn-danger">전체 점수 초기화</button>
-      </div>
-    </section>
+      .player-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 8px;
+        background: #fff;
+      }
 
-    <section id="roundContainer"></section>
-  </div>
+      .player-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
 
-  <script>
-    const state = {
-      players: 2,
-      rounds: 3
-    };
+      .player-name {
+        font-size: 15px;
+        font-weight: 700;
+      }
 
-    const playerCountEl = document.getElementById("playerCount");
-    const roundCountEl = document.getElementById("roundCount");
-    const resetBtn = document.getElementById("resetBtn");
-    const roundContainerEl = document.getElementById("roundContainer");
+      .player-head-right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
 
-    function toScore(value) {
-      const n = Number(value);
-      if (!Number.isFinite(n)) return 0;
-      return Math.floor(n);
-    }
+      .key-inline {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 2px 6px;
+        background: #fff;
+      }
 
-    function makeGridInput(round, player, cell) {
-      const input = document.createElement("input");
-      input.type = "number";
-      input.id = `cell-r${round}-p${player}-c${cell}`;
-      input.step = "1";
-      input.value = "0";
-      input.inputMode = "numeric";
-      input.addEventListener("input", recalculate);
-      return input;
-    }
+      .key-inline span {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+        white-space: nowrap;
+      }
 
-    function makeKeyInput(round, player) {
-      const input = document.createElement("input");
-      input.type = "number";
-      input.id = `key-r${round}-p${player}`;
-      input.step = "1";
-      input.min = "0";
-      input.value = "0";
-      input.inputMode = "numeric";
-      input.addEventListener("input", recalculate);
-      return input;
-    }
+      .key-inline input {
+        width: 44px;
+        min-width: 44px;
+        padding: 4px 2px;
+        font-size: 16px;
+        border-radius: 6px;
+      }
 
-    function buildUI() {
-      roundContainerEl.innerHTML = "";
+      .round-total-chip {
+        font-size: 14px;
+        background: var(--p-strong, #1d3f95);
+        border-radius: 99px;
+        padding: 5px 10px;
+        font-weight: 800;
+        color: var(--p-strong-text, #ffffff);
+      }
 
-      for (let r = 1; r <= state.rounds; r++) {
-        const roundPanel = document.createElement("section");
-        roundPanel.className = "panel round-block";
+      .player-theme-1 {
+        --p-bg: #ffecee;
+        --p-border: #ffb9c0;
+        --p-text: #9e1f2f;
+        --p-strong: #c52a3d;
+        --p-strong-text: #ffffff;
+      }
 
-        const title = document.createElement("h2");
-        title.className = "round-title";
-        title.textContent = `${r}라운드`;
-        roundPanel.appendChild(title);
+      .player-theme-2 {
+        --p-bg: #e9f2ff;
+        --p-border: #b9d3ff;
+        --p-text: #1f56a8;
+        --p-strong: #1f56a8;
+        --p-strong-text: #ffffff;
+      }
 
-        const roundMeta = document.createElement("div");
-        roundMeta.className = "round-meta";
-        roundMeta.id = `round-meta-r${r}`;
-        roundPanel.appendChild(roundMeta);
+      .player-theme-3 {
+        --p-bg: #fff4e7;
+        --p-border: #ffd7a8;
+        --p-text: #9a5a00;
+        --p-strong: #b96b00;
+        --p-strong-text: #ffffff;
+      }
 
-        const playerGrid = document.createElement("div");
-        playerGrid.className = "player-grid";
+      .player-theme-4 {
+        --p-bg: #f4ecff;
+        --p-border: #d5c0ff;
+        --p-text: #6941a3;
+        --p-strong: #6941a3;
+        --p-strong-text: #ffffff;
+      }
 
-        for (let p = 1; p <= state.players; p++) {
-          const card = document.createElement("article");
-          card.className = "player-card";
+      .score-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+        margin-bottom: 8px;
+      }
 
-          const header = document.createElement("div");
-          header.className = "player-header";
+      .score-grid input {
+        padding: 8px 3px;
+        font-size: 16px;
+      }
 
-          const name = document.createElement("div");
-          name.className = "player-name";
-          name.textContent = `${p}P`;
-
-          const headRight = document.createElement("div");
-          headRight.className = "player-head-right";
-
-          const keyInline = document.createElement("div");
-          keyInline.className = "key-inline";
-          keyInline.classList.add(`player-theme-${p}`);
-          const keyLabel = document.createElement("span");
-          keyLabel.textContent = "🔑";
-          keyInline.appendChild(keyLabel);
-          keyInline.appendChild(makeKeyInput(r, p));
-
-          const roundTotal = document.createElement("div");
-          roundTotal.className = `round-total-chip player-theme-${p}`;
-          roundTotal.id = `round-total-r${r}-p${p}`;
-          roundTotal.textContent = "합계 0점";
-
-          headRight.appendChild(keyInline);
-          headRight.appendChild(roundTotal);
-          header.appendChild(name);
-          header.appendChild(headRight);
-          card.appendChild(header);
-
-          const scoreGrid = document.createElement("div");
-          scoreGrid.className = "score-grid";
-          for (let c = 1; c <= 9; c++) {
-            scoreGrid.appendChild(makeGridInput(r, p, c));
-          }
-          card.appendChild(scoreGrid);
-
-          playerGrid.appendChild(card);
+      @media (min-width: 680px) {
+        body {
+          padding: 18px;
         }
 
-        roundPanel.appendChild(playerGrid);
-        roundContainerEl.appendChild(roundPanel);
-      }
-
-      recalculate();
-    }
-
-    function recalculate() {
-      const roundScores = [];
-
-      for (let r = 1; r <= state.rounds; r++) {
-        const entries = [];
-
-        for (let p = 1; p <= state.players; p++) {
-          let roundCard = 0;
-          for (let c = 1; c <= 9; c++) {
-            const cellEl = document.getElementById(`cell-r${r}-p${p}-c${c}`);
-            const cellScore = toScore(cellEl.value);
-            cellEl.value = String(cellScore);
-            roundCard += cellScore;
-          }
-
-          const keyEl = document.getElementById(`key-r${r}-p${p}`);
-          const roundKey = Math.max(0, toScore(keyEl.value));
-          keyEl.value = String(roundKey);
-
-          const roundFinal = roundCard + roundKey;
-
-          const roundTotalEl = document.getElementById(`round-total-r${r}-p${p}`);
-          roundTotalEl.textContent = `합계 ${roundFinal}점`;
-
-          entries.push({ player: p, score: roundFinal });
+        .controls {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
         }
 
-        roundScores.push({ round: r, entries });
+        .player-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
       }
 
-      renderRoundResults(roundScores);
-    }
+      @media (max-width: 420px) {
+        .controls {
+          grid-template-columns: 1fr 1fr;
+          row-gap: 4px;
+          column-gap: 6px;
+        }
 
-    function renderRoundResults(roundScores) {
-      roundScores.forEach(({ round, entries }) => {
-        const metaEl = document.getElementById(`round-meta-r${round}`);
-        metaEl.innerHTML = "";
+        .controls .field:last-child {
+          grid-column: 1 / -1;
+          gap: 0;
+        }
 
-        const maxScore = Math.max(...entries.map((entry) => entry.score));
-        const winnerCount = entries.filter((entry) => entry.score === maxScore).length;
+        .controls .field:last-child label {
+          display: none;
+        }
+      }
 
-        entries
-          .slice()
-          .sort((a, b) => b.score - a.score || a.player - b.player)
-          .forEach((entry) => {
+      @media (min-width: 1024px) {
+        .player-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1 class="title">캐슬콤보 점수 계산기</h1>
+
+      <section class="panel controls">
+        <div class="field">
+          <label for="playerCount">인원수</label>
+          <select id="playerCount">
+            <option value="2" selected>2인</option>
+            <option value="3">3인</option>
+            <option value="4">4인</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="roundCount">라운드 수</label>
+          <select id="roundCount">
+            <option value="1">1라운드</option>
+            <option value="2">2라운드</option>
+            <option value="3" selected>3라운드</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button id="resetBtn" type="button" class="btn-danger">
+            전체 점수 초기화
+          </button>
+        </div>
+      </section>
+
+      <section id="roundContainer"></section>
+    </div>
+
+    <script>
+      const state = {
+        players: 2,
+        rounds: 3,
+      };
+
+      const playerCountEl = document.getElementById("playerCount");
+      const roundCountEl = document.getElementById("roundCount");
+      const resetBtn = document.getElementById("resetBtn");
+      const roundContainerEl = document.getElementById("roundContainer");
+
+      function toScore(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return 0;
+        return Math.floor(n);
+      }
+
+      function makeGridInput(round, player, cell) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = `cell-r${round}-p${player}-c${cell}`;
+        input.step = "1";
+        input.value = "0";
+        input.inputMode = "numeric";
+        input.addEventListener("input", recalculate);
+        return input;
+      }
+
+      function makeKeyInput(round, player) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = `key-r${round}-p${player}`;
+        input.step = "1";
+        input.min = "0";
+        input.value = "0";
+        input.inputMode = "numeric";
+        input.addEventListener("input", recalculate);
+        return input;
+      }
+
+      function buildUI() {
+        roundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.rounds; r++) {
+          const roundPanel = document.createElement("section");
+          roundPanel.className = "panel round-block";
+
+          const roundHead = document.createElement("div");
+          roundHead.className = "round-head";
+
+          const title = document.createElement("h2");
+          title.className = "round-title";
+          title.textContent = `${r}라운드`;
+          roundHead.appendChild(title);
+
+          const roundMeta = document.createElement("div");
+          roundMeta.className = "round-meta";
+          roundMeta.id = `round-meta-r${r}`;
+          roundHead.appendChild(roundMeta);
+          roundPanel.appendChild(roundHead);
+
+          const playerGrid = document.createElement("div");
+          playerGrid.className = "player-grid";
+
+          for (let p = 1; p <= state.players; p++) {
+            const card = document.createElement("article");
+            card.className = "player-card";
+
+            const header = document.createElement("div");
+            header.className = "player-header";
+
+            const name = document.createElement("div");
+            name.className = "player-name";
+            name.textContent = `${p}P`;
+
+            const headRight = document.createElement("div");
+            headRight.className = "player-head-right";
+
+            const keyInline = document.createElement("div");
+            keyInline.className = "key-inline";
+            keyInline.classList.add(`player-theme-${p}`);
+            const keyLabel = document.createElement("span");
+            keyLabel.textContent = "🔑";
+            keyInline.appendChild(keyLabel);
+            keyInline.appendChild(makeKeyInput(r, p));
+
+            const roundTotal = document.createElement("div");
+            roundTotal.className = `round-total-chip player-theme-${p}`;
+            roundTotal.id = `round-total-r${r}-p${p}`;
+            roundTotal.textContent = "합계 0점";
+
+            headRight.appendChild(keyInline);
+            headRight.appendChild(roundTotal);
+            header.appendChild(name);
+            header.appendChild(headRight);
+            card.appendChild(header);
+
+            const scoreGrid = document.createElement("div");
+            scoreGrid.className = "score-grid";
+            for (let c = 1; c <= 9; c++) {
+              scoreGrid.appendChild(makeGridInput(r, p, c));
+            }
+            card.appendChild(scoreGrid);
+
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          roundContainerEl.appendChild(roundPanel);
+        }
+
+        recalculate();
+      }
+
+      function recalculate() {
+        const roundScores = [];
+
+        for (let r = 1; r <= state.rounds; r++) {
+          const entries = [];
+
+          for (let p = 1; p <= state.players; p++) {
+            let roundCard = 0;
+            for (let c = 1; c <= 9; c++) {
+              const cellEl = document.getElementById(`cell-r${r}-p${p}-c${c}`);
+              const cellScore = toScore(cellEl.value);
+              cellEl.value = String(cellScore);
+              roundCard += cellScore;
+            }
+
+            const keyEl = document.getElementById(`key-r${r}-p${p}`);
+            const roundKey = Math.max(0, toScore(keyEl.value));
+            keyEl.value = String(roundKey);
+
+            const roundFinal = roundCard + roundKey;
+
+            const roundTotalEl = document.getElementById(
+              `round-total-r${r}-p${p}`,
+            );
+            roundTotalEl.textContent = `합계 ${roundFinal}점`;
+
+            entries.push({ player: p, score: roundFinal });
+          }
+
+          roundScores.push({ round: r, entries });
+        }
+
+        renderRoundResults(roundScores);
+      }
+
+      function renderRoundResults(roundScores) {
+        roundScores.forEach(({ round, entries }) => {
+          const metaEl = document.getElementById(`round-meta-r${round}`);
+          metaEl.innerHTML = "";
+
+          const maxScore = Math.max(...entries.map((entry) => entry.score));
+
+          entries.forEach((entry) => {
             const chip = document.createElement("span");
             const isWin = entry.score === maxScore;
             chip.className = `round-result-chip player-theme-${entry.player} ${isWin ? "win" : "lose"}`;
-
-            let resultText = "패";
-            if (isWin) {
-              resultText = winnerCount > 1 ? "공동승" : "승";
-            }
-            chip.textContent = `${entry.player}P ${entry.score}점 · ${resultText}`;
+            chip.textContent = `${entry.player}P ${entry.score}점${isWin ? " 👑" : ""}`;
             metaEl.appendChild(chip);
           });
+        });
+      }
+
+      function resetScores() {
+        const inputs = roundContainerEl.querySelectorAll(
+          'input[type="number"]',
+        );
+        inputs.forEach((input) => {
+          input.value = "0";
+        });
+        recalculate();
+      }
+
+      playerCountEl.addEventListener("change", () => {
+        state.players = Number(playerCountEl.value) || 2;
+        buildUI();
       });
-    }
 
-    function resetScores() {
-      const inputs = roundContainerEl.querySelectorAll('input[type="number"]');
-      inputs.forEach((input) => {
-        input.value = "0";
+      roundCountEl.addEventListener("change", () => {
+        state.rounds = Number(roundCountEl.value) || 1;
+        buildUI();
       });
-      recalculate();
-    }
 
-    playerCountEl.addEventListener("change", () => {
-      state.players = Number(playerCountEl.value) || 2;
+      resetBtn.addEventListener("click", resetScores);
+
       buildUI();
-    });
-
-    roundCountEl.addEventListener("change", () => {
-      state.rounds = Number(roundCountEl.value) || 1;
-      buildUI();
-    });
-
-    resetBtn.addEventListener("click", resetScores);
-
-    buildUI();
-  </script>
-</body>
+    </script>
+  </body>
 </html>
