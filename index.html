@@ -145,13 +145,13 @@
 
       .lost-grid {
         display: grid;
-        gap: 6px;
+        gap: 4px;
       }
 
       .lost-row {
         display: grid;
-        grid-template-columns: 52px 86px minmax(108px, 1fr) 56px 72px;
-        gap: 4px;
+        grid-template-columns: 46px 72px minmax(92px, 1fr) 40px 62px;
+        gap: 3px;
         align-items: center;
       }
 
@@ -163,20 +163,20 @@
       }
 
       .lost-row input {
-        padding: 4px 4px;
-        font-size: 14px;
+        padding: 3px 4px;
+        font-size: 13px;
       }
 
       .lost-sum-input {
-        font-size: 13px;
-        padding: 3px 4px;
+        font-size: 12px;
+        padding: 2px 4px;
       }
 
       .lost-wager-group {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 2px;
-        padding: 2px;
+        padding: 1px;
         border: 1px solid var(--line);
         border-radius: 8px;
         background: #f8f9fd;
@@ -185,9 +185,9 @@
       .lost-wager-btn {
         border: 0;
         border-radius: 6px;
-        height: 28px;
+        height: 24px;
         padding: 0;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
         background: transparent;
         color: var(--muted);
@@ -205,8 +205,8 @@
       }
 
       .lost-toggle input {
-        width: 18px;
-        height: 18px;
+        width: 15px;
+        height: 15px;
         margin: 0;
       }
 
@@ -217,16 +217,16 @@
         font-size: 12px;
         font-weight: 800;
         text-align: center;
-        padding: 6px 4px;
+        padding: 4px 3px;
       }
 
       .lost-bonus-inline {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         border: 1px solid var(--line);
         border-radius: 999px;
-        padding: 3px 8px;
+        padding: 2px 6px;
         background: #fff;
       }
 
@@ -238,9 +238,9 @@
       }
 
       .lost-bonus-inline input {
-        width: 56px;
-        min-width: 56px;
-        padding: 4px 2px;
+        width: 50px;
+        min-width: 50px;
+        padding: 3px 2px;
         font-size: 16px;
         border-radius: 6px;
       }
@@ -451,7 +451,7 @@
         }
 
         .lost-row {
-          grid-template-columns: 44px 74px minmax(96px, 1fr) 50px 62px;
+          grid-template-columns: 40px 62px minmax(82px, 1fr) 34px 54px;
         }
       }
 
@@ -859,7 +859,7 @@
             bonusInline.className = "lost-bonus-inline";
             bonusInline.classList.add(`player-theme-${p}`);
             const bonusLabel = document.createElement("span");
-            bonusLabel.textContent = "보너스";
+            bonusLabel.textContent = "⭐";
             bonusInline.appendChild(bonusLabel);
             bonusInline.appendChild(
               makeLostInput(`lost-bonus-r${r}-p${p}`, 0, undefined),
