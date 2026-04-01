@@ -26,7 +26,7 @@
         font-family: "Segoe UI", Arial, sans-serif;
         background: var(--bg);
         color: var(--text);
-        padding: 12px;
+        padding: 8px;
       }
 
       .wrap {
@@ -49,14 +49,14 @@
         background: var(--card);
         border: 1px solid var(--line);
         border-radius: 14px;
-        padding: 12px;
+        padding: 10px;
         box-shadow: var(--shadow);
-        margin-bottom: 12px;
+        margin-bottom: 6px;
       }
 
       .controls {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
         align-items: end;
         padding: 6px;
@@ -218,6 +218,22 @@
         font-weight: 800;
         text-align: center;
         padding: 4px 3px;
+      }
+
+      .lost-guide-row {
+        display: grid;
+        grid-template-columns: 46px 60px minmax(116px, 1fr) 36px 56px;
+        gap: 3px;
+        align-items: center;
+        margin-bottom: 2px;
+      }
+
+      .lost-guide {
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.1;
       }
 
       .lost-bonus-inline {
@@ -436,21 +452,15 @@
 
       @media (max-width: 420px) {
         .controls {
-          grid-template-columns: 1fr 1fr;
           row-gap: 4px;
-          column-gap: 6px;
-        }
-
-        .controls .field:last-child {
-          grid-column: 1 / -1;
-          gap: 0;
-        }
-
-        .controls .field:last-child label {
-          display: none;
+          column-gap: 5px;
         }
 
         .lost-row {
+          grid-template-columns: 40px 52px minmax(96px, 1fr) 30px 50px;
+        }
+
+        .lost-guide-row {
           grid-template-columns: 40px 52px minmax(96px, 1fr) 30px 50px;
         }
       }
@@ -515,9 +525,9 @@
           <div class="field">
             <label for="lostRoundCount">라운드 수</label>
             <select id="lostRoundCount">
-              <option value="1">1라운드</option>
+              <option value="1" selected>1라운드</option>
               <option value="2">2라운드</option>
-              <option value="3" selected>3라운드</option>
+              <option value="3">3라운드</option>
             </select>
           </div>
           <div class="field">
@@ -537,7 +547,7 @@
         players: 2,
         rounds: 1,
         lostPlayers: 2,
-        lostRounds: 3,
+        lostRounds: 1,
       };
 
       const playerCountEl = document.getElementById("playerCount");
@@ -551,7 +561,8 @@
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
-      const lostRoundContainerEl = document.getElementById("lostRoundContainer");
+      const lostRoundContainerEl =
+        document.getElementById("lostRoundContainer");
 
       function toScore(value) {
         const n = Number(value);
@@ -879,6 +890,32 @@
             const grid = document.createElement("div");
             grid.className = "lost-grid";
 
+            const guideRow = document.createElement("div");
+            guideRow.className = "lost-guide-row";
+
+            const g0 = document.createElement("div");
+            g0.className = "lost-guide";
+            g0.textContent = "";
+            const g1 = document.createElement("div");
+            g1.className = "lost-guide";
+            g1.textContent = "점수합";
+            const g2 = document.createElement("div");
+            g2.className = "lost-guide";
+            g2.textContent = "x2투자";
+            const g3 = document.createElement("div");
+            g3.className = "lost-guide";
+            g3.textContent = "8장+";
+            const g4 = document.createElement("div");
+            g4.className = "lost-guide";
+            g4.textContent = "구역합";
+
+            guideRow.appendChild(g0);
+            guideRow.appendChild(g1);
+            guideRow.appendChild(g2);
+            guideRow.appendChild(g3);
+            guideRow.appendChild(g4);
+            grid.appendChild(guideRow);
+
             LOST_EXPEDITIONS.forEach((exp, idx) => {
               const row = document.createElement("div");
               row.className = "lost-row";
@@ -895,8 +932,12 @@
               sumInput.classList.add("lost-sum-input");
               sumInput.placeholder = "숫자합";
 
-              const wagerInput = makeLostWagerButtons(`lost-w-r${r}-p${p}-e${idx}`);
-              const bonusToggle = makeLostBonusToggle(`lost-b-r${r}-p${p}-e${idx}`);
+              const wagerInput = makeLostWagerButtons(
+                `lost-w-r${r}-p${p}-e${idx}`,
+              );
+              const bonusToggle = makeLostBonusToggle(
+                `lost-b-r${r}-p${p}-e${idx}`,
+              );
 
               const expScore = document.createElement("div");
               expScore.className = "lost-exp-score";
@@ -930,14 +971,22 @@
 
           for (let p = 1; p <= state.lostPlayers; p++) {
             let total = 0;
-            const bonusScoreEl = document.getElementById(`lost-bonus-r${r}-p${p}`);
+            const bonusScoreEl = document.getElementById(
+              `lost-bonus-r${r}-p${p}`,
+            );
             const bonus = Math.max(0, toScore(bonusScoreEl.value));
             bonusScoreEl.value = String(bonus);
 
             LOST_EXPEDITIONS.forEach((_, idx) => {
-              const sumEl = document.getElementById(`lost-sum-r${r}-p${p}-e${idx}`);
-              const wagerEl = document.getElementById(`lost-w-r${r}-p${p}-e${idx}`);
-              const bonusEl = document.getElementById(`lost-b-r${r}-p${p}-e${idx}`);
+              const sumEl = document.getElementById(
+                `lost-sum-r${r}-p${p}-e${idx}`,
+              );
+              const wagerEl = document.getElementById(
+                `lost-w-r${r}-p${p}-e${idx}`,
+              );
+              const bonusEl = document.getElementById(
+                `lost-b-r${r}-p${p}-e${idx}`,
+              );
               const expScoreEl = document.getElementById(
                 `lost-exp-score-r${r}-p${p}-e${idx}`,
               );
