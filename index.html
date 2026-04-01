@@ -112,6 +112,139 @@
         color: #fff;
       }
 
+      .game-tabs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 6px;
+      }
+
+      .tab-btn {
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--muted);
+        height: 38px;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .tab-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+      }
+
+      .game-page {
+        display: none;
+      }
+
+      .game-page.active {
+        display: block;
+      }
+
+      .lost-grid {
+        display: grid;
+        gap: 6px;
+      }
+
+      .lost-row {
+        display: grid;
+        grid-template-columns: 52px 86px minmax(108px, 1fr) 56px 72px;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .lost-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      .lost-row input {
+        padding: 4px 4px;
+        font-size: 14px;
+      }
+
+      .lost-sum-input {
+        font-size: 13px;
+        padding: 3px 4px;
+      }
+
+      .lost-wager-group {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2px;
+        padding: 2px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f8f9fd;
+      }
+
+      .lost-wager-btn {
+        border: 0;
+        border-radius: 6px;
+        height: 28px;
+        padding: 0;
+        font-size: 13px;
+        font-weight: 700;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .lost-wager-btn.active {
+        background: var(--primary);
+        color: #fff;
+      }
+
+      .lost-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .lost-toggle input {
+        width: 18px;
+        height: 18px;
+        margin: 0;
+      }
+
+      .lost-exp-score {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #f6f8fd;
+        font-size: 12px;
+        font-weight: 800;
+        text-align: center;
+        padding: 6px 4px;
+      }
+
+      .lost-bonus-inline {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 3px 8px;
+        background: #fff;
+      }
+
+      .lost-bonus-inline span {
+        font-size: 11px;
+        color: var(--muted);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .lost-bonus-inline input {
+        width: 56px;
+        min-width: 56px;
+        padding: 4px 2px;
+        font-size: 16px;
+        border-radius: 6px;
+      }
+
       .round-block + .round-block {
         margin-top: 14px;
       }
@@ -316,6 +449,10 @@
         .controls .field:last-child label {
           display: none;
         }
+
+        .lost-row {
+          grid-template-columns: 44px 74px minmax(96px, 1fr) 50px 62px;
+        }
       }
 
       @media (min-width: 1024px) {
@@ -327,46 +464,94 @@
   </head>
   <body>
     <div class="wrap">
-      <h1 class="title">캐슬콤보 점수 계산기</h1>
-
-      <section class="panel controls">
-        <div class="field">
-          <label for="playerCount">인원수</label>
-          <select id="playerCount">
-            <option value="2" selected>2인</option>
-            <option value="3">3인</option>
-            <option value="4">4인</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="roundCount">라운드 수</label>
-          <select id="roundCount">
-            <option value="1">1라운드</option>
-            <option value="2">2라운드</option>
-            <option value="3" selected>3라운드</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>&nbsp;</label>
-          <button id="resetBtn" type="button" class="btn-danger">
-            전체 점수 초기화
-          </button>
-        </div>
+      <section class="panel game-tabs">
+        <button id="tabCastle" type="button" class="tab-btn active">
+          캐슬콤보
+        </button>
+        <button id="tabLostCity" type="button" class="tab-btn">
+          로스트시티
+        </button>
       </section>
 
-      <section id="roundContainer"></section>
+      <section id="pageCastle" class="game-page active">
+        <section class="panel controls">
+          <div class="field">
+            <label for="playerCount">인원수</label>
+            <select id="playerCount">
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="roundCount">라운드 수</label>
+            <select id="roundCount">
+              <option value="1" selected>1라운드</option>
+              <option value="2">2라운드</option>
+              <option value="3">3라운드</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="resetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="roundContainer"></section>
+      </section>
+
+      <section id="pageLostCity" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <label for="lostPlayerCount">인원수</label>
+            <select id="lostPlayerCount">
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="lostRoundCount">라운드 수</label>
+            <select id="lostRoundCount">
+              <option value="1">1라운드</option>
+              <option value="2">2라운드</option>
+              <option value="3" selected>3라운드</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="lostResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="lostRoundContainer"></section>
+      </section>
     </div>
 
     <script>
       const state = {
         players: 2,
-        rounds: 3,
+        rounds: 1,
+        lostPlayers: 2,
+        lostRounds: 3,
       };
 
       const playerCountEl = document.getElementById("playerCount");
       const roundCountEl = document.getElementById("roundCount");
       const resetBtn = document.getElementById("resetBtn");
       const roundContainerEl = document.getElementById("roundContainer");
+      const tabCastleEl = document.getElementById("tabCastle");
+      const tabLostCityEl = document.getElementById("tabLostCity");
+      const pageCastleEl = document.getElementById("pageCastle");
+      const pageLostCityEl = document.getElementById("pageLostCity");
+      const lostPlayerCountEl = document.getElementById("lostPlayerCount");
+      const lostRoundCountEl = document.getElementById("lostRoundCount");
+      const lostResetBtnEl = document.getElementById("lostResetBtn");
+      const lostRoundContainerEl = document.getElementById("lostRoundContainer");
 
       function toScore(value) {
         const n = Number(value);
@@ -399,6 +584,87 @@
         return input;
       }
 
+      const LOST_EXPEDITIONS = [
+        { key: "z1", label: "1구역" },
+        { key: "z2", label: "2구역" },
+        { key: "z3", label: "3구역" },
+        { key: "z4", label: "4구역" },
+        { key: "z5", label: "5구역" },
+      ];
+
+      function makeLostInput(id, min, max) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = id;
+        input.step = "1";
+        if (min !== undefined) input.min = String(min);
+        if (max !== undefined) input.max = String(max);
+        input.value = "0";
+        input.inputMode = "numeric";
+        bindSelectAll(input);
+        input.addEventListener("input", recalculateLost);
+        return input;
+      }
+
+      function makeLostWagerButtons(id) {
+        const wrap = document.createElement("div");
+        wrap.className = "lost-wager-group";
+
+        [0, 1, 2, 3].forEach((n) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `lost-wager-btn${n === 0 ? " active" : ""}`;
+          btn.dataset.value = String(n);
+          btn.textContent = String(n);
+          btn.addEventListener("click", () => {
+            setLostWagerValue(id, n);
+          });
+          wrap.appendChild(btn);
+        });
+
+        const hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.id = id;
+        hidden.value = "0";
+        wrap.appendChild(hidden);
+
+        return wrap;
+      }
+
+      function syncLostWagerButtons(id) {
+        const hidden = document.getElementById(id);
+        if (!hidden) return;
+        const value = Math.min(3, Math.max(0, toScore(hidden.value)));
+        hidden.value = String(value);
+        const wrap = hidden.parentElement;
+        if (!wrap) return;
+        const buttons = wrap.querySelectorAll(".lost-wager-btn");
+        buttons.forEach((btn) => {
+          btn.classList.toggle("active", toScore(btn.dataset.value) === value);
+        });
+      }
+
+      function setLostWagerValue(id, value) {
+        const hidden = document.getElementById(id);
+        if (!hidden) return;
+        hidden.value = String(value);
+        syncLostWagerButtons(id);
+        recalculateLost();
+      }
+
+      function makeLostBonusToggle(id) {
+        const wrap = document.createElement("label");
+        wrap.className = "lost-toggle";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = id;
+        checkbox.addEventListener("change", recalculateLost);
+
+        wrap.appendChild(checkbox);
+        return wrap;
+      }
+
       function bindSelectAll(input) {
         const selectAll = () => {
           if (typeof input.select === "function") {
@@ -411,11 +677,6 @@
         });
 
         input.addEventListener("mouseup", (event) => {
-          event.preventDefault();
-          selectAll();
-        });
-
-        input.addEventListener("touchend", (event) => {
           event.preventDefault();
           selectAll();
         });
@@ -527,12 +788,12 @@
           roundScores.push({ round: r, entries });
         }
 
-        renderRoundResults(roundScores);
+        renderRoundResults(roundScores, "round-meta-r");
       }
 
-      function renderRoundResults(roundScores) {
+      function renderRoundResults(roundScores, metaPrefix) {
         roundScores.forEach(({ round, entries }) => {
-          const metaEl = document.getElementById(`round-meta-r${round}`);
+          const metaEl = document.getElementById(`${metaPrefix}${round}`);
           metaEl.innerHTML = "";
 
           const maxScore = Math.max(...entries.map((entry) => entry.score));
@@ -556,6 +817,162 @@
         });
       }
 
+      function buildLostUI() {
+        lostRoundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.lostRounds; r++) {
+          const roundPanel = document.createElement("section");
+          roundPanel.className = "panel round-block";
+
+          const roundHead = document.createElement("div");
+          roundHead.className = "round-head";
+
+          const title = document.createElement("h2");
+          title.className = "round-title";
+          title.textContent = `${r}R`;
+          roundHead.appendChild(title);
+
+          const roundMeta = document.createElement("div");
+          roundMeta.className = "round-meta";
+          roundMeta.id = `lost-round-meta-r${r}`;
+          roundHead.appendChild(roundMeta);
+          roundPanel.appendChild(roundHead);
+
+          const playerGrid = document.createElement("div");
+          playerGrid.className = "player-grid";
+
+          for (let p = 1; p <= state.lostPlayers; p++) {
+            const card = document.createElement("article");
+            card.className = "player-card";
+
+            const header = document.createElement("div");
+            header.className = "player-header";
+
+            const name = document.createElement("div");
+            name.className = `player-name player-theme-${p}`;
+            name.textContent = `${p}P`;
+
+            const headRight = document.createElement("div");
+            headRight.className = "player-head-right";
+
+            const bonusInline = document.createElement("div");
+            bonusInline.className = "lost-bonus-inline";
+            bonusInline.classList.add(`player-theme-${p}`);
+            const bonusLabel = document.createElement("span");
+            bonusLabel.textContent = "보너스";
+            bonusInline.appendChild(bonusLabel);
+            bonusInline.appendChild(
+              makeLostInput(`lost-bonus-r${r}-p${p}`, 0, undefined),
+            );
+
+            const roundTotal = document.createElement("div");
+            roundTotal.className = `round-total-chip player-theme-${p}`;
+            roundTotal.id = `lost-total-r${r}-p${p}`;
+            roundTotal.textContent = "합계 0점";
+
+            header.appendChild(name);
+            headRight.appendChild(bonusInline);
+            headRight.appendChild(roundTotal);
+            header.appendChild(headRight);
+            card.appendChild(header);
+
+            const grid = document.createElement("div");
+            grid.className = "lost-grid";
+
+            LOST_EXPEDITIONS.forEach((exp, idx) => {
+              const row = document.createElement("div");
+              row.className = "lost-row";
+
+              const label = document.createElement("div");
+              label.className = "lost-label";
+              label.textContent = exp.label;
+
+              const sumInput = makeLostInput(
+                `lost-sum-r${r}-p${p}-e${idx}`,
+                0,
+                undefined,
+              );
+              sumInput.classList.add("lost-sum-input");
+              sumInput.placeholder = "숫자합";
+
+              const wagerInput = makeLostWagerButtons(`lost-w-r${r}-p${p}-e${idx}`);
+              const bonusToggle = makeLostBonusToggle(`lost-b-r${r}-p${p}-e${idx}`);
+
+              const expScore = document.createElement("div");
+              expScore.className = "lost-exp-score";
+              expScore.id = `lost-exp-score-r${r}-p${p}-e${idx}`;
+              expScore.textContent = "0";
+
+              row.appendChild(label);
+              row.appendChild(sumInput);
+              row.appendChild(wagerInput);
+              row.appendChild(bonusToggle);
+              row.appendChild(expScore);
+              grid.appendChild(row);
+            });
+
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          lostRoundContainerEl.appendChild(roundPanel);
+        }
+
+        recalculateLost();
+      }
+
+      function recalculateLost() {
+        const roundScores = [];
+
+        for (let r = 1; r <= state.lostRounds; r++) {
+          const entries = [];
+
+          for (let p = 1; p <= state.lostPlayers; p++) {
+            let total = 0;
+            const bonusScoreEl = document.getElementById(`lost-bonus-r${r}-p${p}`);
+            const bonus = Math.max(0, toScore(bonusScoreEl.value));
+            bonusScoreEl.value = String(bonus);
+
+            LOST_EXPEDITIONS.forEach((_, idx) => {
+              const sumEl = document.getElementById(`lost-sum-r${r}-p${p}-e${idx}`);
+              const wagerEl = document.getElementById(`lost-w-r${r}-p${p}-e${idx}`);
+              const bonusEl = document.getElementById(`lost-b-r${r}-p${p}-e${idx}`);
+              const expScoreEl = document.getElementById(
+                `lost-exp-score-r${r}-p${p}-e${idx}`,
+              );
+
+              const sum = Math.max(0, toScore(sumEl.value));
+              const wager = Math.min(3, Math.max(0, toScore(wagerEl.value)));
+              const hasBonus = Boolean(bonusEl.checked);
+
+              sumEl.value = String(sum);
+              wagerEl.value = String(wager);
+
+              let expeditionScore = 0;
+              if (sum > 0 || wager > 0 || hasBonus) {
+                expeditionScore = (sum - 20) * (wager + 1);
+                if (hasBonus) {
+                  expeditionScore += 20;
+                }
+              }
+
+              expScoreEl.textContent = String(expeditionScore);
+              total += expeditionScore;
+            });
+
+            const totalEl = document.getElementById(`lost-total-r${r}-p${p}`);
+            total += bonus;
+            totalEl.textContent = `합계 ${total}점`;
+            entries.push({ player: p, score: total });
+          }
+
+          roundScores.push({ round: r, entries });
+        }
+
+        renderRoundResults(roundScores, "lost-round-meta-r");
+      }
+
       function resetScores() {
         const inputs = roundContainerEl.querySelectorAll(
           'input[type="number"]',
@@ -564,6 +981,32 @@
           input.value = "0";
         });
         recalculate();
+      }
+
+      function resetLostScores() {
+        const numberInputs = lostRoundContainerEl.querySelectorAll(
+          'input[type="number"]',
+        );
+        numberInputs.forEach((input) => {
+          input.value = "0";
+        });
+
+        const wagerHiddenInputs = lostRoundContainerEl.querySelectorAll(
+          'input[type="hidden"][id^="lost-w-"]',
+        );
+        wagerHiddenInputs.forEach((hidden) => {
+          hidden.value = "0";
+          syncLostWagerButtons(hidden.id);
+        });
+
+        const checks = lostRoundContainerEl.querySelectorAll(
+          'input[type="checkbox"]',
+        );
+        checks.forEach((check) => {
+          check.checked = false;
+        });
+
+        recalculateLost();
       }
 
       playerCountEl.addEventListener("change", () => {
@@ -578,7 +1021,37 @@
 
       resetBtn.addEventListener("click", resetScores);
 
+      lostPlayerCountEl.addEventListener("change", () => {
+        state.lostPlayers = Number(lostPlayerCountEl.value) || 2;
+        buildLostUI();
+      });
+
+      lostRoundCountEl.addEventListener("change", () => {
+        state.lostRounds = Number(lostRoundCountEl.value) || 3;
+        buildLostUI();
+      });
+
+      lostResetBtnEl.addEventListener("click", resetLostScores);
+
+      function setActiveGame(gameKey) {
+        const isCastle = gameKey === "castle";
+        tabCastleEl.classList.toggle("active", isCastle);
+        tabLostCityEl.classList.toggle("active", !isCastle);
+        pageCastleEl.classList.toggle("active", isCastle);
+        pageLostCityEl.classList.toggle("active", !isCastle);
+      }
+
+      tabCastleEl.addEventListener("click", () => {
+        setActiveGame("castle");
+      });
+
+      tabLostCityEl.addEventListener("click", () => {
+        setActiveGame("lostcity");
+      });
+
+      setActiveGame("castle");
       buildUI();
+      buildLostUI();
     </script>
   </body>
 </html>
