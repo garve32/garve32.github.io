@@ -517,10 +517,6 @@
         .controls {
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
-
-        .player-grid {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
       }
 
       @media (max-width: 420px) {
@@ -538,9 +534,74 @@
         }
       }
 
-      @media (min-width: 1024px) {
+      /* Tablet (iPad) optimization */
+      @media (min-width: 768px) and (max-width: 1199px) {
+        body {
+          padding: 12px;
+        }
+
+        .wrap {
+          max-width: 1024px;
+        }
+
+        .panel {
+          padding: 10px;
+        }
+
         .player-grid {
-          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 8px;
+        }
+
+        .round-meta {
+          gap: 7px;
+        }
+
+        .lost-row {
+          grid-template-columns: 46px 62px minmax(124px, 1fr) 36px 60px;
+        }
+
+        .lost-guide-row {
+          grid-template-columns: 46px 62px minmax(124px, 1fr) 36px 60px;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        body {
+          padding: 20px;
+        }
+
+        .wrap {
+          max-width: 1320px;
+        }
+
+        .panel {
+          padding: 12px;
+          margin-bottom: 10px;
+        }
+
+        .controls {
+          gap: 8px;
+          padding: 6px;
+        }
+
+        .controls select,
+        .controls button {
+          height: 36px;
+          font-size: 13px;
+        }
+
+        .round-meta {
+          gap: 8px;
+        }
+
+        .player-grid {
+          gap: 10px;
+        }
+      }
+
+      @media (min-width: 1600px) {
+        .wrap {
+          max-width: 1480px;
         }
       }
     </style>
@@ -766,6 +827,18 @@
         });
       }
 
+      function getResponsiveMaxColumns() {
+        const width = window.innerWidth || document.documentElement.clientWidth;
+        if (width >= 1400) return 4;
+        if (width >= 768) return 2;
+        return 1;
+      }
+
+      function applyResponsiveGridColumns(gridEl, playerCount) {
+        const cols = Math.min(playerCount, getResponsiveMaxColumns());
+        gridEl.style.gridTemplateColumns = `repeat(${Math.max(1, cols)}, minmax(0, 1fr))`;
+      }
+
       function buildUI() {
         roundContainerEl.innerHTML = "";
 
@@ -789,6 +862,7 @@
 
           const playerGrid = document.createElement("div");
           playerGrid.className = "player-grid";
+          applyResponsiveGridColumns(playerGrid, state.players);
 
           for (let p = 1; p <= state.players; p++) {
             const card = document.createElement("article");
@@ -924,6 +998,7 @@
 
           const playerGrid = document.createElement("div");
           playerGrid.className = "player-grid";
+          applyResponsiveGridColumns(playerGrid, state.lostPlayers);
 
           for (let p = 1; p <= state.lostPlayers; p++) {
             const card = document.createElement("article");
@@ -1171,6 +1246,15 @@
 
       tabLostCityEl.addEventListener("click", () => {
         setActiveGame("lostcity");
+      });
+
+      window.addEventListener("resize", () => {
+        document.querySelectorAll("#pageCastle .player-grid").forEach((grid) => {
+          applyResponsiveGridColumns(grid, state.players);
+        });
+        document.querySelectorAll("#pageLostCity .player-grid").forEach((grid) => {
+          applyResponsiveGridColumns(grid, state.lostPlayers);
+        });
       });
 
       setActiveGame("castle");
