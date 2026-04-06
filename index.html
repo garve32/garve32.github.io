@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>캐슬콤보 점수 계산기</title>
+    <title>보드게임 점수 계산기</title>
     <style>
       :root {
         --bg: #f3f6fa;
@@ -44,6 +44,19 @@
         --shadow-soft: 0 4px 10px rgba(102, 72, 32, 0.08);
       }
 
+      body.theme-harmonies {
+        --bg: #eef7fb;
+        --card: #fbfeff;
+        --line: #c7dced;
+        --text: #163447;
+        --muted: #55758a;
+        --primary: #1a8bc8;
+        --danger: #c55b4f;
+        --chip: #e8f6ff;
+        --shadow: 0 12px 26px rgba(26, 102, 142, 0.12);
+        --shadow-soft: 0 4px 10px rgba(26, 102, 142, 0.08);
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -51,11 +64,7 @@
       body {
         margin: 0;
         font-family:
-          "Pretendard",
-          "Noto Sans KR",
-          "Segoe UI",
-          Arial,
-          sans-serif;
+          "Pretendard", "Noto Sans KR", "Segoe UI", Arial, sans-serif;
         background: var(--bg);
         color: var(--text);
         padding: 8px;
@@ -131,7 +140,8 @@
       input:focus {
         outline: none;
         border-color: var(--primary);
-        box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+        box-shadow: 0 0 0 3px
+          color-mix(in srgb, var(--primary) 18%, transparent);
       }
 
       input[type="number"] {
@@ -174,7 +184,7 @@
 
       .game-tabs {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
         padding: 4px;
       }
@@ -198,7 +208,8 @@
         background: var(--primary);
         border-color: var(--primary);
         color: #fff;
-        box-shadow: 0 8px 18px color-mix(in srgb, var(--primary) 36%, transparent);
+        box-shadow: 0 8px 18px
+          color-mix(in srgb, var(--primary) 36%, transparent);
       }
 
       .game-page {
@@ -300,6 +311,93 @@
         color: var(--muted);
         text-align: center;
         line-height: 1.1;
+      }
+
+      .harm-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      .harm-divider {
+        height: 1px;
+        background: color-mix(in srgb, var(--line) 90%, transparent);
+        margin: 2px 0;
+      }
+
+      .harm-col {
+        display: grid;
+        gap: 4px;
+        align-content: start;
+      }
+
+      .harm-row {
+        display: grid;
+        grid-template-columns: 64px 1fr;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .harm-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 2px 4px;
+      }
+
+      .harm-label.mountain {
+        color: #5a6472;
+        background: #eef2f7;
+        border-color: #d5dde8;
+      }
+
+      .harm-label.tree {
+        color: #2f8f4b;
+        background: #ebfaef;
+        border-color: #bdecc8;
+      }
+
+      .harm-label.field {
+        color: #8a6a00;
+        background: #fff8d8;
+        border-color: #f3e392;
+      }
+
+      .harm-label.river {
+        color: #2b78c5;
+        background: #e9f6ff;
+        border-color: #b8e2fb;
+      }
+
+      .harm-label.building {
+        color: #cc4652;
+        background: #ffecee;
+        border-color: #ffc5cc;
+      }
+
+      .harm-label.animal {
+        color: #1f6fa5;
+        background: #e8f5ff;
+        border-color: #b9ddf5;
+      }
+
+      .harm-row input {
+        padding: 3px 4px;
+        font-size: 16px;
+      }
+
+      .harm-sub-chip {
+        font-size: 12px;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-weight: 700;
+        color: var(--muted);
+        background: color-mix(in srgb, var(--card) 88%, var(--chip) 12%);
+        border: 1px solid var(--line);
+        white-space: nowrap;
       }
 
       .lost-bonus-inline,
@@ -532,6 +630,15 @@
         .lost-guide-row {
           grid-template-columns: 40px 52px minmax(96px, 1fr) 30px 50px;
         }
+
+        .harm-row {
+          grid-template-columns: 56px 1fr;
+          gap: 4px;
+        }
+
+        .harm-grid {
+          gap: 4px;
+        }
       }
 
       /* Tablet (iPad) optimization */
@@ -615,6 +722,9 @@
         <button id="tabLostCity" type="button" class="tab-btn">
           로스트시티
         </button>
+        <button id="tabHarmonies" type="button" class="tab-btn">
+          하모니즈
+        </button>
       </section>
 
       <section id="pageCastle" class="game-page active">
@@ -674,6 +784,36 @@
 
         <section id="lostRoundContainer"></section>
       </section>
+
+      <section id="pageHarmonies" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <label for="harmPlayerCount">인원수</label>
+            <select id="harmPlayerCount">
+              <option value="1">1인</option>
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="harmRoundCount">라운드 수</label>
+            <select id="harmRoundCount">
+              <option value="1" selected>1라운드</option>
+              <option value="2">2라운드</option>
+              <option value="3">3라운드</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="harmResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="harmRoundContainer"></section>
+      </section>
     </div>
 
     <script>
@@ -682,6 +822,16 @@
         rounds: 1,
         lostPlayers: 2,
         lostRounds: 1,
+        harmPlayers: 2,
+        harmRounds: 1,
+      };
+
+      const STORAGE_KEYS = {
+        legacy: "board-score-calculator-v1",
+        castle: "board-score-castle-v1",
+        lost: "board-score-lost-v1",
+        harmonies: "board-score-harmonies-v1",
+        ui: "board-score-ui-v1",
       };
 
       const playerCountEl = document.getElementById("playerCount");
@@ -690,13 +840,144 @@
       const roundContainerEl = document.getElementById("roundContainer");
       const tabCastleEl = document.getElementById("tabCastle");
       const tabLostCityEl = document.getElementById("tabLostCity");
+      const tabHarmoniesEl = document.getElementById("tabHarmonies");
       const pageCastleEl = document.getElementById("pageCastle");
       const pageLostCityEl = document.getElementById("pageLostCity");
+      const pageHarmoniesEl = document.getElementById("pageHarmonies");
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
       const lostRoundContainerEl =
         document.getElementById("lostRoundContainer");
+      const harmPlayerCountEl = document.getElementById("harmPlayerCount");
+      const harmRoundCountEl = document.getElementById("harmRoundCount");
+      const harmResetBtnEl = document.getElementById("harmResetBtn");
+      const harmRoundContainerEl =
+        document.getElementById("harmRoundContainer");
+
+      function loadStorageByKey(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function saveStorageByKey(key, payload) {
+        try {
+          localStorage.setItem(key, JSON.stringify(payload));
+        } catch (_) {
+          // Ignore storage failures on restricted environments.
+        }
+      }
+
+      function collectValues(rootEl, selector) {
+        const values = {};
+        rootEl.querySelectorAll(selector).forEach((el) => {
+          if (!el.id) return;
+          if (el.type === "checkbox") {
+            values[el.id] = Boolean(el.checked);
+          } else {
+            values[el.id] = el.value;
+          }
+        });
+        return values;
+      }
+
+      function applyValues(values) {
+        if (!values) return;
+        Object.entries(values).forEach(([id, value]) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (el.type === "checkbox") {
+            el.checked = Boolean(value);
+          } else {
+            el.value = String(value);
+          }
+        });
+      }
+
+      function persistCastle() {
+        saveStorageByKey(STORAGE_KEYS.castle, {
+          settings: { players: state.players, rounds: state.rounds },
+          values: collectValues(roundContainerEl, 'input[type="number"]'),
+        });
+      }
+
+      function persistLost() {
+        saveStorageByKey(STORAGE_KEYS.lost, {
+          settings: { players: state.lostPlayers, rounds: state.lostRounds },
+          values: collectValues(
+            lostRoundContainerEl,
+            'input[type="number"], input[type="hidden"], input[type="checkbox"]',
+          ),
+        });
+      }
+
+      function persistHarmonies() {
+        saveStorageByKey(STORAGE_KEYS.harmonies, {
+          settings: { players: state.harmPlayers, rounds: state.harmRounds },
+          values: collectValues(harmRoundContainerEl, 'input[type="number"]'),
+        });
+      }
+
+      const legacyStored = loadStorageByKey(STORAGE_KEYS.legacy);
+      const storedCastle =
+        loadStorageByKey(STORAGE_KEYS.castle) ||
+        (legacyStored
+          ? {
+              settings: {
+                players: legacyStored.state?.players,
+                rounds: legacyStored.state?.rounds,
+              },
+              values: legacyStored.castleValues,
+            }
+          : null);
+      const storedLost =
+        loadStorageByKey(STORAGE_KEYS.lost) ||
+        (legacyStored
+          ? {
+              settings: {
+                players: legacyStored.state?.lostPlayers,
+                rounds: legacyStored.state?.lostRounds,
+              },
+              values: legacyStored.lostValues,
+            }
+          : null);
+      const storedHarmonies =
+        loadStorageByKey(STORAGE_KEYS.harmonies) ||
+        (legacyStored
+          ? {
+              settings: {
+                players: legacyStored.state?.harmPlayers,
+                rounds: legacyStored.state?.harmRounds,
+              },
+              values: legacyStored.harmoniesValues,
+            }
+          : null);
+      const storedUI = loadStorageByKey(STORAGE_KEYS.ui);
+
+      if (storedCastle?.settings) {
+        state.players = Number(storedCastle.settings.players) || 2;
+        state.rounds = Number(storedCastle.settings.rounds) || 1;
+      }
+      if (storedLost?.settings) {
+        state.lostPlayers = Number(storedLost.settings.players) || 2;
+        state.lostRounds = Number(storedLost.settings.rounds) || 1;
+      }
+      if (storedHarmonies?.settings) {
+        state.harmPlayers = Number(storedHarmonies.settings.players) || 2;
+        state.harmRounds = Number(storedHarmonies.settings.rounds) || 1;
+      }
+
+      playerCountEl.value = String(state.players);
+      roundCountEl.value = String(state.rounds);
+      lostPlayerCountEl.value = String(state.lostPlayers);
+      lostRoundCountEl.value = String(state.lostRounds);
+      harmPlayerCountEl.value = String(state.harmPlayers);
+      harmRoundCountEl.value = String(state.harmRounds);
 
       function toScore(value) {
         const n = Number(value);
@@ -947,6 +1228,7 @@
         }
 
         renderRoundResults(roundScores, "round-meta-r");
+        persistCastle();
       }
 
       function renderRoundResults(roundScores, metaPrefix) {
@@ -973,6 +1255,189 @@
             metaEl.appendChild(chip);
           });
         });
+      }
+
+      const HARM_LANDSCAPES = [
+        { key: "mountain", label: "산", cls: "mountain" },
+        { key: "tree", label: "나무", cls: "tree" },
+        { key: "field", label: "들판", cls: "field" },
+        { key: "river", label: "강", cls: "river" },
+        { key: "building", label: "건물", cls: "building" },
+      ];
+      const HARM_ANIMAL_INPUTS = 6;
+
+      function makeHarmInput(id) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = id;
+        input.step = "1";
+        input.value = "0";
+        input.inputMode = "numeric";
+        bindSelectAll(input);
+        input.addEventListener("input", recalculateHarmonies);
+        return input;
+      }
+
+      function buildHarmoniesUI() {
+        harmRoundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.harmRounds; r++) {
+          const roundPanel = document.createElement("section");
+          roundPanel.className = "panel round-block";
+
+          const roundHead = document.createElement("div");
+          roundHead.className = "round-head";
+
+          const title = document.createElement("h2");
+          title.className = "round-title";
+          title.textContent = `${r}R`;
+          roundHead.appendChild(title);
+
+          const roundMeta = document.createElement("div");
+          roundMeta.className = "round-meta";
+          roundMeta.id = `harm-round-meta-r${r}`;
+          roundHead.appendChild(roundMeta);
+          roundPanel.appendChild(roundHead);
+
+          const playerGrid = document.createElement("div");
+          playerGrid.className = "player-grid";
+          applyResponsiveGridColumns(playerGrid, state.harmPlayers);
+
+          for (let p = 1; p <= state.harmPlayers; p++) {
+            const card = document.createElement("article");
+            card.className = "player-card";
+
+            const header = document.createElement("div");
+            header.className = "player-header";
+
+            const name = document.createElement("div");
+            name.className = `player-name player-theme-${p}`;
+            name.textContent = `${p}P`;
+
+            const headRight = document.createElement("div");
+            headRight.className = "player-head-right";
+
+            const landSub = document.createElement("div");
+            landSub.className = "harm-sub-chip";
+            landSub.id = `harm-land-sub-r${r}-p${p}`;
+            landSub.textContent = "풍경 0";
+
+            const animalSub = document.createElement("div");
+            animalSub.className = "harm-sub-chip";
+            animalSub.id = `harm-animal-sub-r${r}-p${p}`;
+            animalSub.textContent = "동물 0";
+
+            const total = document.createElement("div");
+            total.className = `round-total-chip player-theme-${p}`;
+            total.id = `harm-total-r${r}-p${p}`;
+            total.textContent = "합계 0점";
+
+            header.appendChild(name);
+            headRight.appendChild(landSub);
+            headRight.appendChild(animalSub);
+            headRight.appendChild(total);
+            header.appendChild(headRight);
+            card.appendChild(header);
+
+            const grid = document.createElement("div");
+            grid.className = "harm-grid";
+
+            const landCol = document.createElement("div");
+            landCol.className = "harm-col";
+
+            HARM_LANDSCAPES.forEach((item, idx) => {
+              const row = document.createElement("div");
+              row.className = "harm-row";
+
+              const label = document.createElement("div");
+              label.className = `harm-label ${item.cls}`;
+              label.textContent = item.label;
+
+              const input = makeHarmInput(`harm-land-r${r}-p${p}-c${idx}`);
+
+              row.appendChild(label);
+              row.appendChild(input);
+              landCol.appendChild(row);
+            });
+
+            const animalCol = document.createElement("div");
+            animalCol.className = "harm-col";
+
+            for (let a = 1; a <= HARM_ANIMAL_INPUTS; a++) {
+              const row = document.createElement("div");
+              row.className = "harm-row";
+
+              const label = document.createElement("div");
+              label.className = "harm-label animal";
+              label.textContent = `동물${a}`;
+
+              const input = makeHarmInput(`harm-animal-r${r}-p${p}-a${a}`);
+
+              row.appendChild(label);
+              row.appendChild(input);
+              animalCol.appendChild(row);
+            }
+
+            grid.appendChild(landCol);
+            grid.appendChild(animalCol);
+
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          harmRoundContainerEl.appendChild(roundPanel);
+        }
+
+        recalculateHarmonies();
+      }
+
+      function recalculateHarmonies() {
+        const roundScores = [];
+
+        for (let r = 1; r <= state.harmRounds; r++) {
+          const entries = [];
+
+          for (let p = 1; p <= state.harmPlayers; p++) {
+            let landscapeTotal = 0;
+            for (let idx = 0; idx < HARM_LANDSCAPES.length; idx++) {
+              const inputEl = document.getElementById(
+                `harm-land-r${r}-p${p}-c${idx}`,
+              );
+              const score = Math.max(0, toScore(inputEl.value));
+              inputEl.value = String(score);
+              landscapeTotal += score;
+            }
+
+            let animalTotal = 0;
+            for (let a = 1; a <= HARM_ANIMAL_INPUTS; a++) {
+              const inputEl = document.getElementById(
+                `harm-animal-r${r}-p${p}-a${a}`,
+              );
+              const score = Math.max(0, toScore(inputEl.value));
+              inputEl.value = String(score);
+              animalTotal += score;
+            }
+
+            const total = landscapeTotal + animalTotal;
+            const landSubEl = document.getElementById(
+              `harm-land-sub-r${r}-p${p}`,
+            );
+            const animalSubEl = document.getElementById(
+              `harm-animal-sub-r${r}-p${p}`,
+            );
+            const totalEl = document.getElementById(`harm-total-r${r}-p${p}`);
+            landSubEl.textContent = `풍경 ${landscapeTotal}`;
+            animalSubEl.textContent = `동물 ${animalTotal}`;
+            totalEl.textContent = `합계 ${total}점`;
+            entries.push({ player: p, score: total });
+          }
+
+          roundScores.push({ round: r, entries });
+        }
+
+        renderRoundResults(roundScores, "harm-round-meta-r");
+        persistHarmonies();
       }
 
       function buildLostUI() {
@@ -1168,6 +1633,7 @@
         }
 
         renderRoundResults(roundScores, "lost-round-meta-r");
+        persistLost();
       }
 
       function resetScores() {
@@ -1206,6 +1672,16 @@
         recalculateLost();
       }
 
+      function resetHarmoniesScores() {
+        const inputs = harmRoundContainerEl.querySelectorAll(
+          'input[type="number"]',
+        );
+        inputs.forEach((input) => {
+          input.value = "0";
+        });
+        recalculateHarmonies();
+      }
+
       playerCountEl.addEventListener("change", () => {
         state.players = Number(playerCountEl.value) || 2;
         buildUI();
@@ -1224,20 +1700,41 @@
       });
 
       lostRoundCountEl.addEventListener("change", () => {
-        state.lostRounds = Number(lostRoundCountEl.value) || 3;
+        state.lostRounds = Number(lostRoundCountEl.value) || 1;
         buildLostUI();
       });
 
       lostResetBtnEl.addEventListener("click", resetLostScores);
 
+      harmPlayerCountEl.addEventListener("change", () => {
+        state.harmPlayers = Number(harmPlayerCountEl.value) || 2;
+        buildHarmoniesUI();
+      });
+
+      harmRoundCountEl.addEventListener("change", () => {
+        state.harmRounds = Number(harmRoundCountEl.value) || 1;
+        buildHarmoniesUI();
+      });
+
+      harmResetBtnEl.addEventListener("click", resetHarmoniesScores);
+
       function setActiveGame(gameKey) {
         const isCastle = gameKey === "castle";
+        const isLost = gameKey === "lostcity";
+        const isHarmonies = gameKey === "harmonies";
+
         tabCastleEl.classList.toggle("active", isCastle);
-        tabLostCityEl.classList.toggle("active", !isCastle);
+        tabLostCityEl.classList.toggle("active", isLost);
+        tabHarmoniesEl.classList.toggle("active", isHarmonies);
+
         pageCastleEl.classList.toggle("active", isCastle);
-        pageLostCityEl.classList.toggle("active", !isCastle);
+        pageLostCityEl.classList.toggle("active", isLost);
+        pageHarmoniesEl.classList.toggle("active", isHarmonies);
+
         document.body.classList.toggle("theme-castle", isCastle);
-        document.body.classList.toggle("theme-lost", !isCastle);
+        document.body.classList.toggle("theme-lost", isLost);
+        document.body.classList.toggle("theme-harmonies", isHarmonies);
+        saveStorageByKey(STORAGE_KEYS.ui, { activeGame: gameKey });
       }
 
       tabCastleEl.addEventListener("click", () => {
@@ -1248,18 +1745,51 @@
         setActiveGame("lostcity");
       });
 
-      window.addEventListener("resize", () => {
-        document.querySelectorAll("#pageCastle .player-grid").forEach((grid) => {
-          applyResponsiveGridColumns(grid, state.players);
-        });
-        document.querySelectorAll("#pageLostCity .player-grid").forEach((grid) => {
-          applyResponsiveGridColumns(grid, state.lostPlayers);
-        });
+      tabHarmoniesEl.addEventListener("click", () => {
+        setActiveGame("harmonies");
       });
 
-      setActiveGame("castle");
+      window.addEventListener("resize", () => {
+        document
+          .querySelectorAll("#pageCastle .player-grid")
+          .forEach((grid) => {
+            applyResponsiveGridColumns(grid, state.players);
+          });
+        document
+          .querySelectorAll("#pageLostCity .player-grid")
+          .forEach((grid) => {
+            applyResponsiveGridColumns(grid, state.lostPlayers);
+          });
+        document
+          .querySelectorAll("#pageHarmonies .player-grid")
+          .forEach((grid) => {
+            applyResponsiveGridColumns(grid, state.harmPlayers);
+          });
+      });
+
+      const initialGame =
+        storedUI?.activeGame === "lostcity" ||
+        storedUI?.activeGame === "harmonies"
+          ? storedUI.activeGame
+          : "castle";
+      setActiveGame(initialGame);
       buildUI();
       buildLostUI();
+      buildHarmoniesUI();
+
+      if (storedCastle || storedLost || storedHarmonies) {
+        applyValues(storedCastle?.values);
+        applyValues(storedLost?.values);
+        applyValues(storedHarmonies?.values);
+        document
+          .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
+          .forEach((hidden) => {
+            syncLostWagerButtons(hidden.id);
+          });
+        recalculate();
+        recalculateLost();
+        recalculateHarmonies();
+      }
     </script>
   </body>
 </html>
