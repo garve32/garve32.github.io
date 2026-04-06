@@ -315,8 +315,8 @@
 
       .harm-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-        gap: 6px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
       }
 
       .harm-divider {
@@ -333,8 +333,8 @@
 
       .harm-row {
         display: grid;
-        grid-template-columns: 64px 1fr;
-        gap: 6px;
+        grid-template-columns: 52px 1fr;
+        gap: 4px;
         align-items: center;
       }
 
@@ -349,33 +349,33 @@
       }
 
       .harm-label.mountain {
-        color: #5a6472;
-        background: #eef2f7;
-        border-color: #d5dde8;
+        color: #5d646e;
+        background: #eceff3;
+        border-color: #c8ced8;
       }
 
       .harm-label.tree {
-        color: #2f8f4b;
-        background: #ebfaef;
-        border-color: #bdecc8;
+        color: #2f7a2f;
+        background: #e5f5e5;
+        border-color: #b7dfb7;
       }
 
       .harm-label.field {
-        color: #8a6a00;
-        background: #fff8d8;
-        border-color: #f3e392;
+        color: #8a6400;
+        background: #fff3b8;
+        border-color: #f4d35f;
       }
 
       .harm-label.river {
-        color: #2b78c5;
-        background: #e9f6ff;
-        border-color: #b8e2fb;
+        color: #0f6071;
+        background: #d9f4f8;
+        border-color: #81d2dd;
       }
 
       .harm-label.building {
-        color: #cc4652;
-        background: #ffecee;
-        border-color: #ffc5cc;
+        color: #a9172e;
+        background: #ffd8dd;
+        border-color: #ff9aaa;
       }
 
       .harm-label.animal {
@@ -632,12 +632,12 @@
         }
 
         .harm-row {
-          grid-template-columns: 56px 1fr;
+          grid-template-columns: 44px 1fr;
           gap: 4px;
         }
 
         .harm-grid {
-          gap: 4px;
+          gap: 3px;
         }
       }
 
@@ -827,7 +827,6 @@
       };
 
       const STORAGE_KEYS = {
-        legacy: "board-score-calculator-v1",
         castle: "board-score-castle-v1",
         lost: "board-score-lost-v1",
         harmonies: "board-score-harmonies-v1",
@@ -923,40 +922,9 @@
         });
       }
 
-      const legacyStored = loadStorageByKey(STORAGE_KEYS.legacy);
-      const storedCastle =
-        loadStorageByKey(STORAGE_KEYS.castle) ||
-        (legacyStored
-          ? {
-              settings: {
-                players: legacyStored.state?.players,
-                rounds: legacyStored.state?.rounds,
-              },
-              values: legacyStored.castleValues,
-            }
-          : null);
-      const storedLost =
-        loadStorageByKey(STORAGE_KEYS.lost) ||
-        (legacyStored
-          ? {
-              settings: {
-                players: legacyStored.state?.lostPlayers,
-                rounds: legacyStored.state?.lostRounds,
-              },
-              values: legacyStored.lostValues,
-            }
-          : null);
-      const storedHarmonies =
-        loadStorageByKey(STORAGE_KEYS.harmonies) ||
-        (legacyStored
-          ? {
-              settings: {
-                players: legacyStored.state?.harmPlayers,
-                rounds: legacyStored.state?.harmRounds,
-              },
-              values: legacyStored.harmoniesValues,
-            }
-          : null);
+      const storedCastle = loadStorageByKey(STORAGE_KEYS.castle);
+      const storedLost = loadStorageByKey(STORAGE_KEYS.lost);
+      const storedHarmonies = loadStorageByKey(STORAGE_KEYS.harmonies);
       const storedUI = loadStorageByKey(STORAGE_KEYS.ui);
 
       if (storedCastle?.settings) {
@@ -1121,6 +1089,7 @@
       }
 
       function buildUI() {
+        const prevValues = collectValues(roundContainerEl, 'input[type="number"]');
         roundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.rounds; r++) {
@@ -1192,6 +1161,7 @@
           roundContainerEl.appendChild(roundPanel);
         }
 
+        applyValues(prevValues);
         recalculate();
       }
 
@@ -1264,7 +1234,7 @@
         { key: "river", label: "강", cls: "river" },
         { key: "building", label: "건물", cls: "building" },
       ];
-      const HARM_ANIMAL_INPUTS = 6;
+      const HARM_ANIMAL_INPUTS = 10;
 
       function makeHarmInput(id) {
         const input = document.createElement("input");
@@ -1279,6 +1249,7 @@
       }
 
       function buildHarmoniesUI() {
+        const prevValues = collectValues(harmRoundContainerEl, 'input[type="number"]');
         harmRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.harmRounds; r++) {
@@ -1362,6 +1333,8 @@
 
             const animalCol = document.createElement("div");
             animalCol.className = "harm-col";
+            const animalCol2 = document.createElement("div");
+            animalCol2.className = "harm-col";
 
             for (let a = 1; a <= HARM_ANIMAL_INPUTS; a++) {
               const row = document.createElement("div");
@@ -1375,11 +1348,16 @@
 
               row.appendChild(label);
               row.appendChild(input);
-              animalCol.appendChild(row);
+              if (a <= Math.ceil(HARM_ANIMAL_INPUTS / 2)) {
+                animalCol.appendChild(row);
+              } else {
+                animalCol2.appendChild(row);
+              }
             }
 
             grid.appendChild(landCol);
             grid.appendChild(animalCol);
+            grid.appendChild(animalCol2);
 
             card.appendChild(grid);
             playerGrid.appendChild(card);
@@ -1389,6 +1367,7 @@
           harmRoundContainerEl.appendChild(roundPanel);
         }
 
+        applyValues(prevValues);
         recalculateHarmonies();
       }
 
@@ -1441,6 +1420,10 @@
       }
 
       function buildLostUI() {
+        const prevValues = collectValues(
+          lostRoundContainerEl,
+          'input[type="number"], input[type="hidden"], input[type="checkbox"]',
+        );
         lostRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.lostRounds; r++) {
@@ -1573,6 +1556,12 @@
           lostRoundContainerEl.appendChild(roundPanel);
         }
 
+        applyValues(prevValues);
+        document
+          .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
+          .forEach((hidden) => {
+            syncLostWagerButtons(hidden.id);
+          });
         recalculateLost();
       }
 
