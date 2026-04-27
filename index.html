@@ -407,7 +407,7 @@
       .cent-grid {
         display: grid;
         gap: 4px;
-        --cent-label-w: 84px;
+        --cent-label-w: 74px;
       }
 
       .cent-row {
@@ -423,6 +423,33 @@
         color: var(--muted);
         text-align: center;
         white-space: nowrap;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 2px 4px;
+      }
+
+      .cent-label.card {
+        color: #2f4f78;
+        background: #deecff;
+        border-color: #9fc2f1;
+      }
+
+      .cent-label.gold {
+        color: #8a5500;
+        background: #ffe89a;
+        border-color: #e8bc40;
+      }
+
+      .cent-label.silver {
+        color: #4f5f6d;
+        background: #dde8f2;
+        border-color: #a8b8c7;
+      }
+
+      .cent-label.gem {
+        color: #5a2fb3;
+        background: #e8d8ff;
+        border-color: #b999ff;
       }
 
       .cent-grid input {
@@ -464,6 +491,28 @@
 
       .round-block + .round-block {
         margin-top: 14px;
+      }
+
+      .round-add-wrap {
+        margin: 8px 0 12px;
+      }
+
+      .round-add-btn {
+        height: 34px;
+        border: 1px dashed var(--line);
+        background: color-mix(in srgb, var(--card) 92%, white 8%);
+        color: var(--muted);
+        font-size: 13px;
+        padding: 0;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .round-add-btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
       }
 
       .round-title {
@@ -673,7 +722,7 @@
         }
 
         .cent-row {
-          --cent-label-w: 76px;
+          --cent-label-w: 68px;
           grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
           gap: 4px;
         }
@@ -793,6 +842,11 @@
         </section>
 
         <section id="roundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="addRoundBtn" type="button" class="round-add-btn">
+            라운드 추가 +
+          </button>
+        </div>
       </section>
 
       <section id="pageLostCity" class="game-page">
@@ -819,6 +873,11 @@
         </section>
 
         <section id="lostRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="lostAddRoundBtn" type="button" class="round-add-btn">
+            라운드 추가 +
+          </button>
+        </div>
       </section>
 
       <section id="pageHarmonies" class="game-page">
@@ -846,6 +905,11 @@
         </section>
 
         <section id="harmRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="harmAddRoundBtn" type="button" class="round-add-btn">
+            라운드 추가 +
+          </button>
+        </div>
       </section>
 
       <section id="pageCentury" class="game-page">
@@ -872,6 +936,11 @@
         </section>
 
         <section id="centRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="centAddRoundBtn" type="button" class="round-add-btn">
+            라운드 추가 +
+          </button>
+        </div>
       </section>
     </div>
 
@@ -898,6 +967,7 @@
       const playerCountEl = document.getElementById("playerCount");
       const roundCountEl = document.getElementById("roundCount");
       const resetBtn = document.getElementById("resetBtn");
+      const addRoundBtnEl = document.getElementById("addRoundBtn");
       const roundContainerEl = document.getElementById("roundContainer");
       const tabCastleEl = document.getElementById("tabCastle");
       const tabLostCityEl = document.getElementById("tabLostCity");
@@ -910,16 +980,19 @@
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
+      const lostAddRoundBtnEl = document.getElementById("lostAddRoundBtn");
       const lostRoundContainerEl =
         document.getElementById("lostRoundContainer");
       const harmPlayerCountEl = document.getElementById("harmPlayerCount");
       const harmRoundCountEl = document.getElementById("harmRoundCount");
       const harmResetBtnEl = document.getElementById("harmResetBtn");
+      const harmAddRoundBtnEl = document.getElementById("harmAddRoundBtn");
       const harmRoundContainerEl =
         document.getElementById("harmRoundContainer");
       const centPlayerCountEl = document.getElementById("centPlayerCount");
       const centRoundCountEl = document.getElementById("centRoundCount");
       const centResetBtnEl = document.getElementById("centResetBtn");
+      const centAddRoundBtnEl = document.getElementById("centAddRoundBtn");
       const centRoundContainerEl =
         document.getElementById("centRoundContainer");
 
@@ -931,6 +1004,7 @@
           pageEl: pageCastleEl,
           playerCountEl,
           roundCountEl,
+          addRoundBtnEl,
           roundContainerEl,
           valueSelector: 'input[type="number"]',
         },
@@ -941,6 +1015,7 @@
           pageEl: pageLostCityEl,
           playerCountEl: lostPlayerCountEl,
           roundCountEl: lostRoundCountEl,
+          addRoundBtnEl: lostAddRoundBtnEl,
           roundContainerEl: lostRoundContainerEl,
           valueSelector:
             'input[type="number"], input[type="hidden"], input[type="checkbox"]',
@@ -952,6 +1027,7 @@
           pageEl: pageHarmoniesEl,
           playerCountEl: harmPlayerCountEl,
           roundCountEl: harmRoundCountEl,
+          addRoundBtnEl: harmAddRoundBtnEl,
           roundContainerEl: harmRoundContainerEl,
           valueSelector: 'input[type="number"]',
         },
@@ -962,6 +1038,7 @@
           pageEl: pageCenturyEl,
           playerCountEl: centPlayerCountEl,
           roundCountEl: centRoundCountEl,
+          addRoundBtnEl: centAddRoundBtnEl,
           roundContainerEl: centRoundContainerEl,
           valueSelector: 'input[type="number"]',
         },
@@ -1034,11 +1111,30 @@
         const stored = storedByGame[gameKey];
         if (stored?.settings) {
           state[game.statePlayersKey] = Number(stored.settings.players) || 2;
-          state[game.stateRoundsKey] = Number(stored.settings.rounds) || 1;
+          state[game.stateRoundsKey] = Math.min(
+            3,
+            Math.max(1, Number(stored.settings.rounds) || 1),
+          );
         }
         game.playerCountEl.value = String(state[game.statePlayersKey]);
         game.roundCountEl.value = String(state[game.stateRoundsKey]);
       });
+
+      function updateRoundAddButton(gameKey) {
+        const game = GAME_DEFS[gameKey];
+        if (!game?.addRoundBtnEl) return;
+        const rounds = Math.min(3, Math.max(1, Number(state[game.stateRoundsKey]) || 1));
+        game.addRoundBtnEl.disabled = rounds >= 3;
+      }
+
+      function setGameRounds(gameKey, nextRounds) {
+        const game = GAME_DEFS[gameKey];
+        const rounds = Math.min(3, Math.max(1, Number(nextRounds) || 1));
+        state[game.stateRoundsKey] = rounds;
+        game.roundCountEl.value = String(rounds);
+        buildGameUI(gameKey);
+        updateRoundAddButton(gameKey);
+      }
 
       function toScore(value) {
         const n = Number(value);
@@ -1204,7 +1300,8 @@
 
       function getResponsiveMaxColumns() {
         const width = window.innerWidth || document.documentElement.clientWidth;
-        const height = window.innerHeight || document.documentElement.clientHeight;
+        const height =
+          window.innerHeight || document.documentElement.clientHeight;
         const isLandscapePhoneTabletLayout =
           width >= 640 &&
           width < 768 &&
@@ -1655,7 +1752,7 @@
             const cardRow = document.createElement("div");
             cardRow.className = "cent-row";
             const cardLabel = document.createElement("div");
-            cardLabel.className = "cent-label";
+            cardLabel.className = "cent-label card";
             cardLabel.textContent = "승점카드";
             cardRow.appendChild(cardLabel);
             for (let i = 1; i <= 3; i++) {
@@ -1671,7 +1768,7 @@
             const cardRow2 = document.createElement("div");
             cardRow2.className = "cent-row";
             const cardRow2Label = document.createElement("div");
-            cardRow2Label.className = "cent-label cent-empty";
+            cardRow2Label.className = "cent-label card cent-empty";
             cardRow2Label.textContent = "승점카드";
             cardRow2.appendChild(cardRow2Label);
             for (let i = 4; i <= 6; i++) {
@@ -1687,7 +1784,7 @@
             const goldRow = document.createElement("div");
             goldRow.className = "cent-row";
             const goldLabel = document.createElement("div");
-            goldLabel.className = "cent-label";
+            goldLabel.className = "cent-label gold";
             goldLabel.textContent = "동화 x3";
             goldRow.appendChild(goldLabel);
             goldRow.appendChild(
@@ -1705,7 +1802,7 @@
             const silverRow = document.createElement("div");
             silverRow.className = "cent-row";
             const silverLabel = document.createElement("div");
-            silverLabel.className = "cent-label";
+            silverLabel.className = "cent-label silver";
             silverLabel.textContent = "은화 x1";
             silverRow.appendChild(silverLabel);
             silverRow.appendChild(
@@ -1715,7 +1812,7 @@
               }),
             );
             const gemLabel = document.createElement("div");
-            gemLabel.className = "cent-label";
+            gemLabel.className = "cent-label gem";
             gemLabel.textContent = "수정(노랑제외)";
             silverRow.appendChild(gemLabel);
             silverRow.appendChild(
@@ -1921,12 +2018,15 @@
           buildGameUI(gameKey);
         });
         game.roundCountEl.addEventListener("change", () => {
-          state[game.stateRoundsKey] = Number(game.roundCountEl.value) || 1;
-          buildGameUI(gameKey);
+          setGameRounds(gameKey, game.roundCountEl.value);
         });
         resetButtonEl.addEventListener("click", () => {
           resetGame(gameKey);
         });
+        game.addRoundBtnEl?.addEventListener("click", () => {
+          setGameRounds(gameKey, Number(state[game.stateRoundsKey]) + 1);
+        });
+        updateRoundAddButton(gameKey);
       }
 
       bindGameControls("castle", resetBtn);
@@ -1970,6 +2070,7 @@
           : "castle";
       setActiveGame(initialGame);
       Object.keys(GAME_RUNTIME).forEach((gameKey) => buildGameUI(gameKey));
+      Object.keys(GAME_RUNTIME).forEach((gameKey) => updateRoundAddButton(gameKey));
 
       const hasStoredValues = Object.values(storedByGame).some((v) =>
         Boolean(v),
