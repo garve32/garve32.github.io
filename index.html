@@ -57,6 +57,19 @@
         --shadow-soft: 0 4px 10px rgba(26, 102, 142, 0.08);
       }
 
+      body.theme-century {
+        --bg: #f5f1e6;
+        --card: #fffdf8;
+        --line: #e4d8c2;
+        --text: #3d2f1f;
+        --muted: #7b6749;
+        --primary: #b98535;
+        --danger: #c55b4f;
+        --chip: #fdf3de;
+        --shadow: 0 12px 26px rgba(114, 83, 39, 0.12);
+        --shadow-soft: 0 4px 10px rgba(114, 83, 39, 0.08);
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -184,7 +197,7 @@
 
       .game-tabs {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 6px;
         padding: 4px;
       }
@@ -387,6 +400,93 @@
       .harm-row input {
         padding: 3px 4px;
         font-size: 16px;
+      }
+
+      .cent-grid {
+        display: grid;
+        gap: 4px;
+      }
+
+      .cent-row {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .cent-row-wide {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .cent-bonus-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 104px);
+        gap: 6px;
+        align-items: start;
+      }
+
+      .cent-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .cent-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .cent-cards input {
+        height: 26px;
+        padding: 3px 4px;
+        font-size: 16px;
+      }
+
+      .cent-grid input {
+        height: 26px;
+        padding: 3px 4px;
+      }
+
+      .cent-dual {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .cent-mini {
+        display: grid;
+        grid-template-columns: 92px 1fr;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .cent-mini-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .cent-gem-col {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 4px;
+        align-items: start;
+      }
+
+      .cent-gem-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
       }
 
       .harm-sub-chip {
@@ -639,6 +739,20 @@
         .harm-grid {
           gap: 3px;
         }
+
+        .cent-row {
+          grid-template-columns: 84px 1fr;
+          gap: 4px;
+        }
+
+        .cent-mini {
+          grid-template-columns: 84px 1fr;
+        }
+
+        .cent-bonus-layout {
+          grid-template-columns: minmax(0, 1fr) minmax(0, 92px);
+          gap: 4px;
+        }
       }
 
       /* Tablet (iPad) optimization */
@@ -724,6 +838,9 @@
         </button>
         <button id="tabHarmonies" type="button" class="tab-btn">
           하모니즈
+        </button>
+        <button id="tabCentury" type="button" class="tab-btn">
+          센추리:골렘
         </button>
       </section>
 
@@ -814,6 +931,35 @@
 
         <section id="harmRoundContainer"></section>
       </section>
+
+      <section id="pageCentury" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <label for="centPlayerCount">인원수</label>
+            <select id="centPlayerCount">
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="centRoundCount">라운드 수</label>
+            <select id="centRoundCount">
+              <option value="1" selected>1라운드</option>
+              <option value="2">2라운드</option>
+              <option value="3">3라운드</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button id="centResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="centRoundContainer"></section>
+      </section>
     </div>
 
     <script>
@@ -824,12 +970,15 @@
         lostRounds: 1,
         harmPlayers: 2,
         harmRounds: 1,
+        centPlayers: 2,
+        centRounds: 1,
       };
 
       const STORAGE_KEYS = {
         castle: "board-score-castle-v1",
         lost: "board-score-lost-v1",
         harmonies: "board-score-harmonies-v1",
+        century: "board-score-century-v1",
         ui: "board-score-ui-v1",
       };
 
@@ -840,9 +989,11 @@
       const tabCastleEl = document.getElementById("tabCastle");
       const tabLostCityEl = document.getElementById("tabLostCity");
       const tabHarmoniesEl = document.getElementById("tabHarmonies");
+      const tabCenturyEl = document.getElementById("tabCentury");
       const pageCastleEl = document.getElementById("pageCastle");
       const pageLostCityEl = document.getElementById("pageLostCity");
       const pageHarmoniesEl = document.getElementById("pageHarmonies");
+      const pageCenturyEl = document.getElementById("pageCentury");
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
@@ -853,6 +1004,10 @@
       const harmResetBtnEl = document.getElementById("harmResetBtn");
       const harmRoundContainerEl =
         document.getElementById("harmRoundContainer");
+      const centPlayerCountEl = document.getElementById("centPlayerCount");
+      const centRoundCountEl = document.getElementById("centRoundCount");
+      const centResetBtnEl = document.getElementById("centResetBtn");
+      const centRoundContainerEl = document.getElementById("centRoundContainer");
 
       function loadStorageByKey(key) {
         try {
@@ -922,9 +1077,17 @@
         });
       }
 
+      function persistCentury() {
+        saveStorageByKey(STORAGE_KEYS.century, {
+          settings: { players: state.centPlayers, rounds: state.centRounds },
+          values: collectValues(centRoundContainerEl, 'input[type="number"]'),
+        });
+      }
+
       const storedCastle = loadStorageByKey(STORAGE_KEYS.castle);
       const storedLost = loadStorageByKey(STORAGE_KEYS.lost);
       const storedHarmonies = loadStorageByKey(STORAGE_KEYS.harmonies);
+      const storedCentury = loadStorageByKey(STORAGE_KEYS.century);
       const storedUI = loadStorageByKey(STORAGE_KEYS.ui);
 
       if (storedCastle?.settings) {
@@ -939,6 +1102,10 @@
         state.harmPlayers = Number(storedHarmonies.settings.players) || 2;
         state.harmRounds = Number(storedHarmonies.settings.rounds) || 1;
       }
+      if (storedCentury?.settings) {
+        state.centPlayers = Number(storedCentury.settings.players) || 2;
+        state.centRounds = Number(storedCentury.settings.rounds) || 1;
+      }
 
       playerCountEl.value = String(state.players);
       roundCountEl.value = String(state.rounds);
@@ -946,6 +1113,8 @@
       lostRoundCountEl.value = String(state.lostRounds);
       harmPlayerCountEl.value = String(state.harmPlayers);
       harmRoundCountEl.value = String(state.harmRounds);
+      centPlayerCountEl.value = String(state.centPlayers);
+      centRoundCountEl.value = String(state.centRounds);
 
       function toScore(value) {
         const n = Number(value);
@@ -1248,6 +1417,18 @@
         return input;
       }
 
+      function makeCenturyInput(id) {
+        const input = document.createElement("input");
+        input.type = "number";
+        input.id = id;
+        input.step = "1";
+        input.value = "0";
+        input.inputMode = "numeric";
+        bindSelectAll(input);
+        input.addEventListener("input", recalculateCentury);
+        return input;
+      }
+
       function buildHarmoniesUI() {
         const prevValues = collectValues(harmRoundContainerEl, 'input[type="number"]');
         harmRoundContainerEl.innerHTML = "";
@@ -1417,6 +1598,184 @@
 
         renderRoundResults(roundScores, "harm-round-meta-r");
         persistHarmonies();
+      }
+
+      function buildCenturyUI() {
+        const prevValues = collectValues(centRoundContainerEl, 'input[type="number"]');
+        centRoundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.centRounds; r++) {
+          const roundPanel = document.createElement("section");
+          roundPanel.className = "panel round-block";
+
+          const roundHead = document.createElement("div");
+          roundHead.className = "round-head";
+
+          const title = document.createElement("h2");
+          title.className = "round-title";
+          title.textContent = `${r}R`;
+          roundHead.appendChild(title);
+
+          const roundMeta = document.createElement("div");
+          roundMeta.className = "round-meta";
+          roundMeta.id = `cent-round-meta-r${r}`;
+          roundHead.appendChild(roundMeta);
+          roundPanel.appendChild(roundHead);
+
+          const playerGrid = document.createElement("div");
+          playerGrid.className = "player-grid";
+          applyResponsiveGridColumns(playerGrid, state.centPlayers);
+
+          for (let p = 1; p <= state.centPlayers; p++) {
+            const card = document.createElement("article");
+            card.className = "player-card";
+
+            const header = document.createElement("div");
+            header.className = "player-header";
+
+            const name = document.createElement("div");
+            name.className = `player-name player-theme-${p}`;
+            name.textContent = `${p}P`;
+
+            const headRight = document.createElement("div");
+            headRight.className = "player-head-right";
+
+            const cardSub = document.createElement("div");
+            cardSub.className = "harm-sub-chip";
+            cardSub.id = `cent-card-sub-r${r}-p${p}`;
+            cardSub.textContent = "카드 0";
+
+            const bonusSub = document.createElement("div");
+            bonusSub.className = "harm-sub-chip";
+            bonusSub.id = `cent-bonus-sub-r${r}-p${p}`;
+            bonusSub.textContent = "보너스 0";
+
+            const total = document.createElement("div");
+            total.className = `round-total-chip player-theme-${p}`;
+            total.id = `cent-total-r${r}-p${p}`;
+            total.textContent = "합계 0점";
+
+            header.appendChild(name);
+            headRight.appendChild(cardSub);
+            headRight.appendChild(bonusSub);
+            headRight.appendChild(total);
+            header.appendChild(headRight);
+            card.appendChild(header);
+
+            const grid = document.createElement("div");
+            grid.className = "cent-grid";
+
+            const cardRow = document.createElement("div");
+            cardRow.className = "cent-row";
+            const cardLabel = document.createElement("div");
+            cardLabel.className = "cent-label";
+            cardLabel.textContent = "승점카드";
+            const cards = document.createElement("div");
+            cards.className = "cent-cards";
+            for (let i = 1; i <= 6; i++) {
+              cards.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
+            }
+            cardRow.appendChild(cardLabel);
+            cardRow.appendChild(cards);
+            grid.appendChild(cardRow);
+
+            const coinRow = document.createElement("div");
+            coinRow.className = "cent-row-wide";
+            const bonusLayout = document.createElement("div");
+            bonusLayout.className = "cent-bonus-layout";
+            const coinDual = document.createElement("div");
+            coinDual.className = "cent-grid";
+
+            const goldMini = document.createElement("div");
+            goldMini.className = "cent-mini";
+            const goldMiniLabel = document.createElement("div");
+            goldMiniLabel.className = "cent-mini-label";
+            goldMiniLabel.textContent = "동화 x3";
+            const goldInput = makeCenturyInput(`cent-gold-r${r}-p${p}`);
+            goldMini.appendChild(goldMiniLabel);
+            goldMini.appendChild(goldInput);
+
+            const silverMini = document.createElement("div");
+            silverMini.className = "cent-mini";
+            const silverMiniLabel = document.createElement("div");
+            silverMiniLabel.className = "cent-mini-label";
+            silverMiniLabel.textContent = "은화 x1";
+            const silverInput = makeCenturyInput(`cent-silver-r${r}-p${p}`);
+            silverMini.appendChild(silverMiniLabel);
+            silverMini.appendChild(silverInput);
+
+            coinDual.appendChild(goldMini);
+            coinDual.appendChild(silverMini);
+            bonusLayout.appendChild(coinDual);
+
+            const gemCol = document.createElement("div");
+            gemCol.className = "cent-gem-col";
+            const gemLabel = document.createElement("div");
+            gemLabel.className = "cent-gem-label";
+            gemLabel.textContent = "수정(노랑제외)";
+            const gemInput = makeCenturyInput(`cent-gem-r${r}-p${p}`);
+            gemCol.appendChild(gemLabel);
+            gemCol.appendChild(gemInput);
+            bonusLayout.appendChild(gemCol);
+
+            coinRow.appendChild(bonusLayout);
+            grid.appendChild(coinRow);
+
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          centRoundContainerEl.appendChild(roundPanel);
+        }
+
+        applyValues(prevValues);
+        recalculateCentury();
+      }
+
+      function recalculateCentury() {
+        const roundScores = [];
+
+        for (let r = 1; r <= state.centRounds; r++) {
+          const entries = [];
+
+          for (let p = 1; p <= state.centPlayers; p++) {
+            let cardTotal = 0;
+            for (let i = 1; i <= 6; i++) {
+              const el = document.getElementById(`cent-card-r${r}-p${p}-i${i}`);
+              const val = Math.max(0, toScore(el.value));
+              el.value = String(val);
+              cardTotal += val;
+            }
+
+            const goldEl = document.getElementById(`cent-gold-r${r}-p${p}`);
+            const silverEl = document.getElementById(`cent-silver-r${r}-p${p}`);
+            const gemEl = document.getElementById(`cent-gem-r${r}-p${p}`);
+            const gold = Math.max(0, toScore(goldEl.value));
+            const silver = Math.max(0, toScore(silverEl.value));
+            const gem = Math.max(0, toScore(gemEl.value));
+            goldEl.value = String(gold);
+            silverEl.value = String(silver);
+            gemEl.value = String(gem);
+
+            const bonusTotal = gold * 3 + silver + gem;
+            const total = cardTotal + bonusTotal;
+
+            document.getElementById(`cent-card-sub-r${r}-p${p}`).textContent =
+              `카드 ${cardTotal}`;
+            document.getElementById(`cent-bonus-sub-r${r}-p${p}`).textContent =
+              `보너스 ${bonusTotal}`;
+            document.getElementById(`cent-total-r${r}-p${p}`).textContent =
+              `합계 ${total}점`;
+
+            entries.push({ player: p, score: total });
+          }
+
+          roundScores.push({ round: r, entries });
+        }
+
+        renderRoundResults(roundScores, "cent-round-meta-r");
+        persistCentury();
       }
 
       function buildLostUI() {
@@ -1671,6 +2030,14 @@
         recalculateHarmonies();
       }
 
+      function resetCenturyScores() {
+        const inputs = centRoundContainerEl.querySelectorAll('input[type="number"]');
+        inputs.forEach((input) => {
+          input.value = "0";
+        });
+        recalculateCentury();
+      }
+
       playerCountEl.addEventListener("change", () => {
         state.players = Number(playerCountEl.value) || 2;
         buildUI();
@@ -1707,22 +2074,38 @@
 
       harmResetBtnEl.addEventListener("click", resetHarmoniesScores);
 
+      centPlayerCountEl.addEventListener("change", () => {
+        state.centPlayers = Number(centPlayerCountEl.value) || 2;
+        buildCenturyUI();
+      });
+
+      centRoundCountEl.addEventListener("change", () => {
+        state.centRounds = Number(centRoundCountEl.value) || 1;
+        buildCenturyUI();
+      });
+
+      centResetBtnEl.addEventListener("click", resetCenturyScores);
+
       function setActiveGame(gameKey) {
         const isCastle = gameKey === "castle";
         const isLost = gameKey === "lostcity";
         const isHarmonies = gameKey === "harmonies";
+        const isCentury = gameKey === "century";
 
         tabCastleEl.classList.toggle("active", isCastle);
         tabLostCityEl.classList.toggle("active", isLost);
         tabHarmoniesEl.classList.toggle("active", isHarmonies);
+        tabCenturyEl.classList.toggle("active", isCentury);
 
         pageCastleEl.classList.toggle("active", isCastle);
         pageLostCityEl.classList.toggle("active", isLost);
         pageHarmoniesEl.classList.toggle("active", isHarmonies);
+        pageCenturyEl.classList.toggle("active", isCentury);
 
         document.body.classList.toggle("theme-castle", isCastle);
         document.body.classList.toggle("theme-lost", isLost);
         document.body.classList.toggle("theme-harmonies", isHarmonies);
+        document.body.classList.toggle("theme-century", isCentury);
         saveStorageByKey(STORAGE_KEYS.ui, { activeGame: gameKey });
       }
 
@@ -1736,6 +2119,10 @@
 
       tabHarmoniesEl.addEventListener("click", () => {
         setActiveGame("harmonies");
+      });
+
+      tabCenturyEl.addEventListener("click", () => {
+        setActiveGame("century");
       });
 
       window.addEventListener("resize", () => {
@@ -1754,22 +2141,28 @@
           .forEach((grid) => {
             applyResponsiveGridColumns(grid, state.harmPlayers);
           });
+        document.querySelectorAll("#pageCentury .player-grid").forEach((grid) => {
+          applyResponsiveGridColumns(grid, state.centPlayers);
+        });
       });
 
       const initialGame =
         storedUI?.activeGame === "lostcity" ||
-        storedUI?.activeGame === "harmonies"
+        storedUI?.activeGame === "harmonies" ||
+        storedUI?.activeGame === "century"
           ? storedUI.activeGame
           : "castle";
       setActiveGame(initialGame);
       buildUI();
       buildLostUI();
       buildHarmoniesUI();
+      buildCenturyUI();
 
-      if (storedCastle || storedLost || storedHarmonies) {
+      if (storedCastle || storedLost || storedHarmonies || storedCentury) {
         applyValues(storedCastle?.values);
         applyValues(storedLost?.values);
         applyValues(storedHarmonies?.values);
+        applyValues(storedCentury?.values);
         document
           .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
           .forEach((hidden) => {
@@ -1778,6 +2171,7 @@
         recalculate();
         recalculateLost();
         recalculateHarmonies();
+        recalculateCentury();
       }
     </script>
   </body>
