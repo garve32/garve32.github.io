@@ -19,55 +19,55 @@
       }
 
       body.theme-castle {
-        --bg: #eff7f6;
-        --card: #ffffff;
-        --line: #c7dedd;
-        --text: #113038;
-        --muted: #47656f;
-        --primary: #0f8f8f;
-        --danger: #dd5b66;
-        --chip: #e6f5f3;
-        --shadow: 0 12px 26px rgba(15, 84, 86, 0.12);
-        --shadow-soft: 0 4px 10px rgba(15, 84, 86, 0.08);
+        --bg: #f4efe6;
+        --card: #fffdf8;
+        --line: #d9ccb7;
+        --text: #2f2418;
+        --muted: #6d5b46;
+        --primary: #7c4d2f;
+        --danger: #b44b42;
+        --chip: #f2e6d3;
+        --shadow: 0 12px 26px rgba(92, 67, 40, 0.14);
+        --shadow-soft: 0 4px 10px rgba(92, 67, 40, 0.09);
       }
 
       body.theme-lost {
-        --bg: #f7f2e8;
-        --card: #fffdf8;
-        --line: #e4d5bb;
-        --text: #3a2d1f;
-        --muted: #7b6549;
-        --primary: #c27a2c;
-        --danger: #c55b4f;
-        --chip: #fff3df;
-        --shadow: 0 12px 26px rgba(102, 72, 32, 0.12);
-        --shadow-soft: 0 4px 10px rgba(102, 72, 32, 0.08);
+        --bg: #f2ecdf;
+        --card: #fffbf3;
+        --line: #decfb3;
+        --text: #352a1e;
+        --muted: #75624a;
+        --primary: #2d6f9f;
+        --danger: #c15445;
+        --chip: #f8eedb;
+        --shadow: 0 12px 26px rgba(86, 66, 39, 0.13);
+        --shadow-soft: 0 4px 10px rgba(86, 66, 39, 0.08);
       }
 
       body.theme-harmonies {
-        --bg: #eef7fb;
-        --card: #fbfeff;
-        --line: #c7dced;
-        --text: #163447;
-        --muted: #55758a;
-        --primary: #1a8bc8;
-        --danger: #c55b4f;
-        --chip: #e8f6ff;
-        --shadow: 0 12px 26px rgba(26, 102, 142, 0.12);
-        --shadow-soft: 0 4px 10px rgba(26, 102, 142, 0.08);
+        --bg: #edf7f2;
+        --card: #fbfffd;
+        --line: #c8e0d3;
+        --text: #17382d;
+        --muted: #587a6b;
+        --primary: #2f9d7e;
+        --danger: #c45e4f;
+        --chip: #e6f5ee;
+        --shadow: 0 12px 26px rgba(32, 107, 83, 0.13);
+        --shadow-soft: 0 4px 10px rgba(32, 107, 83, 0.08);
       }
 
       body.theme-century {
-        --bg: #f5f1e6;
-        --card: #fffdf8;
-        --line: #e4d8c2;
-        --text: #3d2f1f;
-        --muted: #7b6749;
-        --primary: #b98535;
-        --danger: #c55b4f;
-        --chip: #fdf3de;
-        --shadow: 0 12px 26px rgba(114, 83, 39, 0.12);
-        --shadow-soft: 0 4px 10px rgba(114, 83, 39, 0.08);
+        --bg: #f4f0fa;
+        --card: #fefcff;
+        --line: #dccfee;
+        --text: #2f2442;
+        --muted: #6f618b;
+        --primary: #5a4fcf;
+        --danger: #c3567d;
+        --chip: #efe8fb;
+        --shadow: 0 12px 26px rgba(75, 58, 126, 0.15);
+        --shadow-soft: 0 4px 10px rgba(75, 58, 126, 0.09);
       }
 
       * {
@@ -444,7 +444,7 @@
       }
 
       .inline-bonus-icon {
-        font-size: 12px;
+        font-size: 16px;
         color: var(--muted);
         font-weight: 700;
         white-space: nowrap;
@@ -769,7 +769,6 @@
       <section id="pageCastle" class="game-page active">
         <section class="panel controls">
           <div class="field">
-            <label for="playerCount">인원수</label>
             <select id="playerCount">
               <option value="2" selected>2인</option>
               <option value="3">3인</option>
@@ -777,7 +776,6 @@
             </select>
           </div>
           <div class="field">
-            <label for="roundCount">라운드 수</label>
             <select id="roundCount">
               <option value="1" selected>1라운드</option>
               <option value="2">2라운드</option>
@@ -785,7 +783,6 @@
             </select>
           </div>
           <div class="field">
-            <label>&nbsp;</label>
             <button id="resetBtn" type="button" class="btn-danger">
               전체 점수 초기화
             </button>
@@ -798,7 +795,6 @@
       <section id="pageLostCity" class="game-page">
         <section class="panel controls">
           <div class="field">
-            <label for="lostPlayerCount">인원수</label>
             <select id="lostPlayerCount">
               <option value="2" selected>2인</option>
               <option value="3">3인</option>
@@ -806,7 +802,6 @@
             </select>
           </div>
           <div class="field">
-            <label for="lostRoundCount">라운드 수</label>
             <select id="lostRoundCount">
               <option value="1" selected>1라운드</option>
               <option value="2">2라운드</option>
@@ -814,7 +809,6 @@
             </select>
           </div>
           <div class="field">
-            <label>&nbsp;</label>
             <button id="lostResetBtn" type="button" class="btn-danger">
               전체 점수 초기화
             </button>
@@ -827,7 +821,6 @@
       <section id="pageHarmonies" class="game-page">
         <section class="panel controls">
           <div class="field">
-            <label for="harmPlayerCount">인원수</label>
             <select id="harmPlayerCount">
               <option value="1">1인</option>
               <option value="2" selected>2인</option>
@@ -836,7 +829,6 @@
             </select>
           </div>
           <div class="field">
-            <label for="harmRoundCount">라운드 수</label>
             <select id="harmRoundCount">
               <option value="1" selected>1라운드</option>
               <option value="2">2라운드</option>
@@ -844,7 +836,6 @@
             </select>
           </div>
           <div class="field">
-            <label>&nbsp;</label>
             <button id="harmResetBtn" type="button" class="btn-danger">
               전체 점수 초기화
             </button>
@@ -857,7 +848,6 @@
       <section id="pageCentury" class="game-page">
         <section class="panel controls">
           <div class="field">
-            <label for="centPlayerCount">인원수</label>
             <select id="centPlayerCount">
               <option value="2" selected>2인</option>
               <option value="3">3인</option>
@@ -865,7 +855,6 @@
             </select>
           </div>
           <div class="field">
-            <label for="centRoundCount">라운드 수</label>
             <select id="centRoundCount">
               <option value="1" selected>1라운드</option>
               <option value="2">2라운드</option>
@@ -873,7 +862,6 @@
             </select>
           </div>
           <div class="field">
-            <label>&nbsp;</label>
             <button id="centResetBtn" type="button" class="btn-danger">
               전체 점수 초기화
             </button>
@@ -929,7 +917,8 @@
       const centPlayerCountEl = document.getElementById("centPlayerCount");
       const centRoundCountEl = document.getElementById("centRoundCount");
       const centResetBtnEl = document.getElementById("centResetBtn");
-      const centRoundContainerEl = document.getElementById("centRoundContainer");
+      const centRoundContainerEl =
+        document.getElementById("centRoundContainer");
 
       const GAME_DEFS = {
         castle: {
@@ -1054,7 +1043,10 @@
         return Math.floor(n);
       }
 
-      function normalizeInputNumber(inputEl, { min = -Infinity, max = Infinity } = {}) {
+      function normalizeInputNumber(
+        inputEl,
+        { min = -Infinity, max = Infinity } = {},
+      ) {
         const value = Math.min(max, Math.max(min, toScore(inputEl.value)));
         inputEl.value = String(value);
         return value;
@@ -1077,7 +1069,14 @@
         if (el) el.textContent = text;
       }
 
-      function createNumberInput({ id, min, max, onInput, className, placeholder }) {
+      function createNumberInput({
+        id,
+        min,
+        max,
+        onInput,
+        className,
+        placeholder,
+      }) {
         const input = document.createElement("input");
         input.type = "number";
         input.id = id;
@@ -1267,7 +1266,10 @@
       }
 
       function buildUI() {
-        const prevValues = collectValues(roundContainerEl, 'input[type="number"]');
+        const prevValues = collectValues(
+          roundContainerEl,
+          'input[type="number"]',
+        );
         roundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.rounds; r++) {
@@ -1352,8 +1354,12 @@
           (i) => `cent-card-r${r}-p${p}-i${i}`,
           { min: 0 },
         );
-        const gold = getNormalizedValueById(`cent-gold-r${r}-p${p}`, { min: 0 });
-        const silver = getNormalizedValueById(`cent-silver-r${r}-p${p}`, { min: 0 });
+        const gold = getNormalizedValueById(`cent-gold-r${r}-p${p}`, {
+          min: 0,
+        });
+        const silver = getNormalizedValueById(`cent-silver-r${r}-p${p}`, {
+          min: 0,
+        });
         const gem = getNormalizedValueById(`cent-gem-r${r}-p${p}`, { min: 0 });
         const bonusTotal = gold * 3 + silver + gem;
         const total = cardTotal + bonusTotal;
@@ -1492,7 +1498,10 @@
       const HARM_ANIMAL_INPUTS = 9;
 
       function buildHarmoniesUI() {
-        const prevValues = collectValues(harmRoundContainerEl, 'input[type="number"]');
+        const prevValues = collectValues(
+          harmRoundContainerEl,
+          'input[type="number"]',
+        );
         harmRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.harmRounds; r++) {
@@ -1596,7 +1605,10 @@
       }
 
       function buildCenturyUI() {
-        const prevValues = collectValues(centRoundContainerEl, 'input[type="number"]');
+        const prevValues = collectValues(
+          centRoundContainerEl,
+          'input[type="number"]',
+        );
         centRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.centRounds; r++) {
@@ -1675,8 +1687,10 @@
                 onInput: recalculateCentury,
               }),
             );
-            goldRow.appendChild(document.createElement("div")).className = "cent-empty";
-            goldRow.appendChild(document.createElement("div")).className = "cent-empty";
+            goldRow.appendChild(document.createElement("div")).className =
+              "cent-empty";
+            goldRow.appendChild(document.createElement("div")).className =
+              "cent-empty";
             grid.appendChild(goldRow);
 
             const silverRow = document.createElement("div");
@@ -1739,7 +1753,11 @@
             const bonusLabel = document.createElement("span");
             bonusLabel.className = "inline-bonus-icon";
             bonusLabel.textContent = "🃏";
-            const bonusInput = makeLostInput(`lost-bonus-r${r}-p${p}`, 0, undefined);
+            const bonusInput = makeLostInput(
+              `lost-bonus-r${r}-p${p}`,
+              0,
+              undefined,
+            );
             bonusInput.classList.add("inline-bonus-input");
 
             const roundTotal = document.createElement("div");
@@ -1912,7 +1930,10 @@
           const isActive = key === gameKey;
           runtime.tabEl.classList.toggle("active", isActive);
           GAME_DEFS[key].pageEl.classList.toggle("active", isActive);
-          document.body.classList.toggle(`theme-${key === "lostcity" ? "lost" : key}`, isActive);
+          document.body.classList.toggle(
+            `theme-${key === "lostcity" ? "lost" : key}`,
+            isActive,
+          );
         });
         saveStorageByKey(STORAGE_KEYS.ui, { activeGame: gameKey });
       }
@@ -1941,7 +1962,9 @@
       setActiveGame(initialGame);
       Object.keys(GAME_RUNTIME).forEach((gameKey) => buildGameUI(gameKey));
 
-      const hasStoredValues = Object.values(storedByGame).some((v) => Boolean(v));
+      const hasStoredValues = Object.values(storedByGame).some((v) =>
+        Boolean(v),
+      );
       if (hasStoredValues) {
         Object.entries(storedByGame).forEach(([gameKey, stored]) => {
           applyValues(stored?.values);
