@@ -443,32 +443,21 @@
         white-space: nowrap;
       }
 
-      .lost-bonus-inline,
-      .key-inline {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 2px 6px;
-        background: color-mix(in srgb, var(--card) 94%, white 6%);
-      }
-
-      .lost-bonus-inline span,
-      .key-inline span {
-        font-size: 11px;
+      .inline-bonus-icon {
+        font-size: 12px;
         color: var(--muted);
         font-weight: 700;
         white-space: nowrap;
+        line-height: 1;
       }
 
-      .lost-bonus-inline input,
-      .key-inline input {
+      .inline-bonus-input {
         width: 52px;
         min-width: 52px;
-        padding: 3px 2px;
+        height: 26px;
+        padding: 3px 4px;
         font-size: 16px;
-        border-radius: 6px;
+        border-radius: 12px;
       }
 
       .round-block + .round-block {
@@ -567,8 +556,6 @@
         align-items: center;
         gap: 6px;
       }
-
-      /* key-inline styles are shared with lost-bonus-inline above */
 
       .round-total-chip {
         font-size: 14px;
@@ -944,6 +931,50 @@
       const centResetBtnEl = document.getElementById("centResetBtn");
       const centRoundContainerEl = document.getElementById("centRoundContainer");
 
+      const GAME_DEFS = {
+        castle: {
+          statePlayersKey: "players",
+          stateRoundsKey: "rounds",
+          storageKey: STORAGE_KEYS.castle,
+          pageEl: pageCastleEl,
+          playerCountEl,
+          roundCountEl,
+          roundContainerEl,
+          valueSelector: 'input[type="number"]',
+        },
+        lostcity: {
+          statePlayersKey: "lostPlayers",
+          stateRoundsKey: "lostRounds",
+          storageKey: STORAGE_KEYS.lost,
+          pageEl: pageLostCityEl,
+          playerCountEl: lostPlayerCountEl,
+          roundCountEl: lostRoundCountEl,
+          roundContainerEl: lostRoundContainerEl,
+          valueSelector:
+            'input[type="number"], input[type="hidden"], input[type="checkbox"]',
+        },
+        harmonies: {
+          statePlayersKey: "harmPlayers",
+          stateRoundsKey: "harmRounds",
+          storageKey: STORAGE_KEYS.harmonies,
+          pageEl: pageHarmoniesEl,
+          playerCountEl: harmPlayerCountEl,
+          roundCountEl: harmRoundCountEl,
+          roundContainerEl: harmRoundContainerEl,
+          valueSelector: 'input[type="number"]',
+        },
+        century: {
+          statePlayersKey: "centPlayers",
+          stateRoundsKey: "centRounds",
+          storageKey: STORAGE_KEYS.century,
+          pageEl: pageCenturyEl,
+          playerCountEl: centPlayerCountEl,
+          roundCountEl: centRoundCountEl,
+          roundContainerEl: centRoundContainerEl,
+          valueSelector: 'input[type="number"]',
+        },
+      };
+
       function loadStorageByKey(key) {
         try {
           const raw = localStorage.getItem(key);
@@ -988,68 +1019,34 @@
         });
       }
 
-      function persistCastle() {
-        saveStorageByKey(STORAGE_KEYS.castle, {
-          settings: { players: state.players, rounds: state.rounds },
-          values: collectValues(roundContainerEl, 'input[type="number"]'),
+      function persistGame(gameKey) {
+        const game = GAME_DEFS[gameKey];
+        if (!game) return;
+        saveStorageByKey(game.storageKey, {
+          settings: {
+            players: state[game.statePlayersKey],
+            rounds: state[game.stateRoundsKey],
+          },
+          values: collectValues(game.roundContainerEl, game.valueSelector),
         });
       }
 
-      function persistLost() {
-        saveStorageByKey(STORAGE_KEYS.lost, {
-          settings: { players: state.lostPlayers, rounds: state.lostRounds },
-          values: collectValues(
-            lostRoundContainerEl,
-            'input[type="number"], input[type="hidden"], input[type="checkbox"]',
-          ),
-        });
-      }
-
-      function persistHarmonies() {
-        saveStorageByKey(STORAGE_KEYS.harmonies, {
-          settings: { players: state.harmPlayers, rounds: state.harmRounds },
-          values: collectValues(harmRoundContainerEl, 'input[type="number"]'),
-        });
-      }
-
-      function persistCentury() {
-        saveStorageByKey(STORAGE_KEYS.century, {
-          settings: { players: state.centPlayers, rounds: state.centRounds },
-          values: collectValues(centRoundContainerEl, 'input[type="number"]'),
-        });
-      }
-
-      const storedCastle = loadStorageByKey(STORAGE_KEYS.castle);
-      const storedLost = loadStorageByKey(STORAGE_KEYS.lost);
-      const storedHarmonies = loadStorageByKey(STORAGE_KEYS.harmonies);
-      const storedCentury = loadStorageByKey(STORAGE_KEYS.century);
+      const storedByGame = {};
+      Object.keys(GAME_DEFS).forEach((gameKey) => {
+        const game = GAME_DEFS[gameKey];
+        storedByGame[gameKey] = loadStorageByKey(game.storageKey);
+      });
       const storedUI = loadStorageByKey(STORAGE_KEYS.ui);
 
-      if (storedCastle?.settings) {
-        state.players = Number(storedCastle.settings.players) || 2;
-        state.rounds = Number(storedCastle.settings.rounds) || 1;
-      }
-      if (storedLost?.settings) {
-        state.lostPlayers = Number(storedLost.settings.players) || 2;
-        state.lostRounds = Number(storedLost.settings.rounds) || 1;
-      }
-      if (storedHarmonies?.settings) {
-        state.harmPlayers = Number(storedHarmonies.settings.players) || 2;
-        state.harmRounds = Number(storedHarmonies.settings.rounds) || 1;
-      }
-      if (storedCentury?.settings) {
-        state.centPlayers = Number(storedCentury.settings.players) || 2;
-        state.centRounds = Number(storedCentury.settings.rounds) || 1;
-      }
-
-      playerCountEl.value = String(state.players);
-      roundCountEl.value = String(state.rounds);
-      lostPlayerCountEl.value = String(state.lostPlayers);
-      lostRoundCountEl.value = String(state.lostRounds);
-      harmPlayerCountEl.value = String(state.harmPlayers);
-      harmRoundCountEl.value = String(state.harmRounds);
-      centPlayerCountEl.value = String(state.centPlayers);
-      centRoundCountEl.value = String(state.centRounds);
+      Object.entries(GAME_DEFS).forEach(([gameKey, game]) => {
+        const stored = storedByGame[gameKey];
+        if (stored?.settings) {
+          state[game.statePlayersKey] = Number(stored.settings.players) || 2;
+          state[game.stateRoundsKey] = Number(stored.settings.rounds) || 1;
+        }
+        game.playerCountEl.value = String(state[game.statePlayersKey]);
+        game.roundCountEl.value = String(state[game.stateRoundsKey]);
+      });
 
       function toScore(value) {
         const n = Number(value);
@@ -1057,29 +1054,58 @@
         return Math.floor(n);
       }
 
-      function makeGridInput(round, player, cell) {
+      function normalizeInputNumber(inputEl, { min = -Infinity, max = Infinity } = {}) {
+        const value = Math.min(max, Math.max(min, toScore(inputEl.value)));
+        inputEl.value = String(value);
+        return value;
+      }
+
+      function getNormalizedValueById(id, options) {
+        return normalizeInputNumber(document.getElementById(id), options);
+      }
+
+      function sumNormalizedRange(start, end, idBuilder, options) {
+        let total = 0;
+        for (let i = start; i <= end; i++) {
+          total += getNormalizedValueById(idBuilder(i), options);
+        }
+        return total;
+      }
+
+      function setTextById(id, text) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text;
+      }
+
+      function createNumberInput({ id, min, max, onInput, className, placeholder }) {
         const input = document.createElement("input");
         input.type = "number";
-        input.id = `cell-r${round}-p${player}-c${cell}`;
+        input.id = id;
         input.step = "1";
+        if (min !== undefined) input.min = String(min);
+        if (max !== undefined) input.max = String(max);
+        if (className) input.className = className;
+        if (placeholder) input.placeholder = placeholder;
         input.value = "0";
         input.inputMode = "numeric";
         bindSelectAll(input);
-        input.addEventListener("input", recalculate);
+        if (onInput) input.addEventListener("input", onInput);
         return input;
       }
 
+      function makeGridInput(round, player, cell) {
+        return createNumberInput({
+          id: `cell-r${round}-p${player}-c${cell}`,
+          onInput: recalculate,
+        });
+      }
+
       function makeKeyInput(round, player) {
-        const input = document.createElement("input");
-        input.type = "number";
-        input.id = `key-r${round}-p${player}`;
-        input.step = "1";
-        input.min = "0";
-        input.value = "0";
-        input.inputMode = "numeric";
-        bindSelectAll(input);
-        input.addEventListener("input", recalculate);
-        return input;
+        return createNumberInput({
+          id: `key-r${round}-p${player}`,
+          min: 0,
+          onInput: recalculate,
+        });
       }
 
       const LOST_EXPEDITIONS = [
@@ -1091,17 +1117,12 @@
       ];
 
       function makeLostInput(id, min, max) {
-        const input = document.createElement("input");
-        input.type = "number";
-        input.id = id;
-        input.step = "1";
-        if (min !== undefined) input.min = String(min);
-        if (max !== undefined) input.max = String(max);
-        input.value = "0";
-        input.inputMode = "numeric";
-        bindSelectAll(input);
-        input.addEventListener("input", recalculateLost);
-        return input;
+        return createNumberInput({
+          id,
+          min,
+          max,
+          onInput: recalculateLost,
+        });
       }
 
       function makeLostWagerButtons(id) {
@@ -1132,8 +1153,7 @@
       function syncLostWagerButtons(id) {
         const hidden = document.getElementById(id);
         if (!hidden) return;
-        const value = Math.min(3, Math.max(0, toScore(hidden.value)));
-        hidden.value = String(value);
+        const value = normalizeInputNumber(hidden, { min: 0, max: 3 });
         const wrap = hidden.parentElement;
         if (!wrap) return;
         const buttons = wrap.querySelectorAll(".lost-wager-btn");
@@ -1192,64 +1212,88 @@
         gridEl.style.gridTemplateColumns = `repeat(${Math.max(1, cols)}, minmax(0, 1fr))`;
       }
 
+      function createRoundShell(round, metaId, playerCount) {
+        const roundPanel = document.createElement("section");
+        roundPanel.className = "panel round-block";
+
+        const roundHead = document.createElement("div");
+        roundHead.className = "round-head";
+
+        const title = document.createElement("h2");
+        title.className = "round-title";
+        title.textContent = `${round}R`;
+        roundHead.appendChild(title);
+
+        const roundMeta = document.createElement("div");
+        roundMeta.className = "round-meta";
+        roundMeta.id = metaId;
+        roundHead.appendChild(roundMeta);
+        roundPanel.appendChild(roundHead);
+
+        const playerGrid = document.createElement("div");
+        playerGrid.className = "player-grid";
+        applyResponsiveGridColumns(playerGrid, playerCount);
+
+        return { roundPanel, playerGrid };
+      }
+
+      function createPlayerCardShell(player) {
+        const card = document.createElement("article");
+        card.className = "player-card";
+
+        const header = document.createElement("div");
+        header.className = "player-header";
+
+        const name = document.createElement("div");
+        name.className = `player-name player-theme-${player}`;
+        name.textContent = `${player}P`;
+
+        const headRight = document.createElement("div");
+        headRight.className = "player-head-right";
+
+        header.appendChild(name);
+        header.appendChild(headRight);
+        card.appendChild(header);
+
+        return { card, headRight };
+      }
+
+      function syncAllLostWagerButtons() {
+        document
+          .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
+          .forEach((hidden) => {
+            syncLostWagerButtons(hidden.id);
+          });
+      }
+
       function buildUI() {
         const prevValues = collectValues(roundContainerEl, 'input[type="number"]');
         roundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.rounds; r++) {
-          const roundPanel = document.createElement("section");
-          roundPanel.className = "panel round-block";
-
-          const roundHead = document.createElement("div");
-          roundHead.className = "round-head";
-
-          const title = document.createElement("h2");
-          title.className = "round-title";
-          title.textContent = `${r}R`;
-          roundHead.appendChild(title);
-
-          const roundMeta = document.createElement("div");
-          roundMeta.className = "round-meta";
-          roundMeta.id = `round-meta-r${r}`;
-          roundHead.appendChild(roundMeta);
-          roundPanel.appendChild(roundHead);
-
-          const playerGrid = document.createElement("div");
-          playerGrid.className = "player-grid";
-          applyResponsiveGridColumns(playerGrid, state.players);
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `round-meta-r${r}`,
+            state.players,
+          );
 
           for (let p = 1; p <= state.players; p++) {
-            const card = document.createElement("article");
-            card.className = "player-card";
+            const { card, headRight } = createPlayerCardShell(p);
 
-            const header = document.createElement("div");
-            header.className = "player-header";
-
-            const name = document.createElement("div");
-            name.className = `player-name player-theme-${p}`;
-            name.textContent = `${p}P`;
-
-            const headRight = document.createElement("div");
-            headRight.className = "player-head-right";
-
-            const keyInline = document.createElement("div");
-            keyInline.className = "key-inline";
-            keyInline.classList.add(`player-theme-${p}`);
             const keyLabel = document.createElement("span");
+            keyLabel.className = "inline-bonus-icon";
             keyLabel.textContent = "🔑";
-            keyInline.appendChild(keyLabel);
-            keyInline.appendChild(makeKeyInput(r, p));
+            const keyInput = makeKeyInput(r, p);
+            keyInput.classList.add("inline-bonus-input");
 
             const roundTotal = document.createElement("div");
             roundTotal.className = `round-total-chip player-theme-${p}`;
             roundTotal.id = `round-total-r${r}-p${p}`;
             roundTotal.textContent = "합계 0점";
 
-            headRight.appendChild(keyInline);
+            headRight.appendChild(keyLabel);
+            headRight.appendChild(keyInput);
             headRight.appendChild(roundTotal);
-            header.appendChild(name);
-            header.appendChild(headRight);
-            card.appendChild(header);
 
             const scoreGrid = document.createElement("div");
             scoreGrid.className = "score-grid";
@@ -1266,43 +1310,133 @@
         }
 
         applyValues(prevValues);
-        recalculate();
+        recalculateGame("castle");
+      }
+
+      function computeCastleRoundScore(r, p) {
+        const roundCard = sumNormalizedRange(
+          1,
+          9,
+          (c) => `cell-r${r}-p${p}-c${c}`,
+        );
+        const roundKey = getNormalizedValueById(`key-r${r}-p${p}`, { min: 0 });
+        const roundFinal = roundCard + roundKey;
+        setTextById(`round-total-r${r}-p${p}`, `합계 ${roundFinal}점`);
+        return roundFinal;
+      }
+
+      function computeHarmoniesRoundScore(r, p) {
+        const landscapeTotal = sumNormalizedRange(
+          0,
+          HARM_LANDSCAPES.length - 1,
+          (idx) => `harm-land-r${r}-p${p}-c${idx}`,
+          { min: 0 },
+        );
+        const animalTotal = sumNormalizedRange(
+          1,
+          HARM_ANIMAL_INPUTS,
+          (a) => `harm-animal-r${r}-p${p}-a${a}`,
+          { min: 0 },
+        );
+        const total = landscapeTotal + animalTotal;
+        setTextById(`harm-land-sub-r${r}-p${p}`, `풍경 ${landscapeTotal}`);
+        setTextById(`harm-animal-sub-r${r}-p${p}`, `동물 ${animalTotal}`);
+        setTextById(`harm-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
+      function computeCenturyRoundScore(r, p) {
+        const cardTotal = sumNormalizedRange(
+          1,
+          6,
+          (i) => `cent-card-r${r}-p${p}-i${i}`,
+          { min: 0 },
+        );
+        const gold = getNormalizedValueById(`cent-gold-r${r}-p${p}`, { min: 0 });
+        const silver = getNormalizedValueById(`cent-silver-r${r}-p${p}`, { min: 0 });
+        const gem = getNormalizedValueById(`cent-gem-r${r}-p${p}`, { min: 0 });
+        const bonusTotal = gold * 3 + silver + gem;
+        const total = cardTotal + bonusTotal;
+        setTextById(`cent-card-sub-r${r}-p${p}`, `카드 ${cardTotal}`);
+        setTextById(`cent-bonus-sub-r${r}-p${p}`, `보너스 ${bonusTotal}`);
+        setTextById(`cent-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
+      function computeLostRoundScore(r, p) {
+        let total = 0;
+        const bonus = getNormalizedValueById(`lost-bonus-r${r}-p${p}`, {
+          min: 0,
+        });
+
+        LOST_EXPEDITIONS.forEach((_, idx) => {
+          const sumId = `lost-sum-r${r}-p${p}-e${idx}`;
+          const wagerId = `lost-w-r${r}-p${p}-e${idx}`;
+          const bonusEl = document.getElementById(`lost-b-r${r}-p${p}-e${idx}`);
+          const expScoreEl = document.getElementById(
+            `lost-exp-score-r${r}-p${p}-e${idx}`,
+          );
+
+          const sum = getNormalizedValueById(sumId, { min: 0 });
+          const wager = getNormalizedValueById(wagerId, { min: 0, max: 3 });
+          const hasBonus = Boolean(bonusEl.checked);
+
+          let expeditionScore = 0;
+          if (sum > 0 || wager > 0 || hasBonus) {
+            expeditionScore = (sum - 20) * (wager + 1);
+            if (hasBonus) {
+              expeditionScore += 20;
+            }
+          }
+
+          expScoreEl.textContent = String(expeditionScore);
+          total += expeditionScore;
+        });
+
+        total += bonus;
+        setTextById(`lost-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
+      const GAME_RECALC_DEFS = {
+        castle: {
+          getRoundCount: () => state.rounds,
+          getPlayerCount: () => state.players,
+          metaPrefix: "round-meta-r",
+          computeScore: computeCastleRoundScore,
+        },
+        harmonies: {
+          getRoundCount: () => state.harmRounds,
+          getPlayerCount: () => state.harmPlayers,
+          metaPrefix: "harm-round-meta-r",
+          computeScore: computeHarmoniesRoundScore,
+        },
+        century: {
+          getRoundCount: () => state.centRounds,
+          getPlayerCount: () => state.centPlayers,
+          metaPrefix: "cent-round-meta-r",
+          computeScore: computeCenturyRoundScore,
+        },
+        lostcity: {
+          getRoundCount: () => state.lostRounds,
+          getPlayerCount: () => state.lostPlayers,
+          metaPrefix: "lost-round-meta-r",
+          computeScore: computeLostRoundScore,
+        },
+      };
+
+      function recalculateByGameDef(gameKey) {
+        const def = GAME_RECALC_DEFS[gameKey];
+        const roundScores = collectRoundScores(
+          def.getRoundCount(),
+          def.getPlayerCount(),
+          def.computeScore,
+        );
+        finalizeRecalculation(roundScores, def.metaPrefix, gameKey);
       }
 
       function recalculate() {
-        const roundScores = [];
-
-        for (let r = 1; r <= state.rounds; r++) {
-          const entries = [];
-
-          for (let p = 1; p <= state.players; p++) {
-            let roundCard = 0;
-            for (let c = 1; c <= 9; c++) {
-              const cellEl = document.getElementById(`cell-r${r}-p${p}-c${c}`);
-              const cellScore = toScore(cellEl.value);
-              cellEl.value = String(cellScore);
-              roundCard += cellScore;
-            }
-
-            const keyEl = document.getElementById(`key-r${r}-p${p}`);
-            const roundKey = Math.max(0, toScore(keyEl.value));
-            keyEl.value = String(roundKey);
-
-            const roundFinal = roundCard + roundKey;
-
-            const roundTotalEl = document.getElementById(
-              `round-total-r${r}-p${p}`,
-            );
-            roundTotalEl.textContent = `합계 ${roundFinal}점`;
-
-            entries.push({ player: p, score: roundFinal });
-          }
-
-          roundScores.push({ round: r, entries });
-        }
-
-        renderRoundResults(roundScores, "round-meta-r");
-        persistCastle();
+        recalculateByGameDef("castle");
       }
 
       function renderRoundResults(roundScores, metaPrefix) {
@@ -1331,6 +1465,23 @@
         });
       }
 
+      function collectRoundScores(roundCount, playerCount, scoreByPlayer) {
+        const roundScores = [];
+        for (let r = 1; r <= roundCount; r++) {
+          const entries = [];
+          for (let p = 1; p <= playerCount; p++) {
+            entries.push({ player: p, score: scoreByPlayer(r, p) });
+          }
+          roundScores.push({ round: r, entries });
+        }
+        return roundScores;
+      }
+
+      function finalizeRecalculation(roundScores, metaPrefix, gameKey) {
+        renderRoundResults(roundScores, metaPrefix);
+        persistGame(gameKey);
+      }
+
       const HARM_LANDSCAPES = [
         { key: "mountain", label: "산", cls: "mountain" },
         { key: "tree", label: "나무", cls: "tree" },
@@ -1340,69 +1491,19 @@
       ];
       const HARM_ANIMAL_INPUTS = 9;
 
-      function makeHarmInput(id) {
-        const input = document.createElement("input");
-        input.type = "number";
-        input.id = id;
-        input.step = "1";
-        input.value = "0";
-        input.inputMode = "numeric";
-        bindSelectAll(input);
-        input.addEventListener("input", recalculateHarmonies);
-        return input;
-      }
-
-      function makeCenturyInput(id) {
-        const input = document.createElement("input");
-        input.type = "number";
-        input.id = id;
-        input.step = "1";
-        input.value = "0";
-        input.inputMode = "numeric";
-        bindSelectAll(input);
-        input.addEventListener("input", recalculateCentury);
-        return input;
-      }
-
       function buildHarmoniesUI() {
         const prevValues = collectValues(harmRoundContainerEl, 'input[type="number"]');
         harmRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.harmRounds; r++) {
-          const roundPanel = document.createElement("section");
-          roundPanel.className = "panel round-block";
-
-          const roundHead = document.createElement("div");
-          roundHead.className = "round-head";
-
-          const title = document.createElement("h2");
-          title.className = "round-title";
-          title.textContent = `${r}R`;
-          roundHead.appendChild(title);
-
-          const roundMeta = document.createElement("div");
-          roundMeta.className = "round-meta";
-          roundMeta.id = `harm-round-meta-r${r}`;
-          roundHead.appendChild(roundMeta);
-          roundPanel.appendChild(roundHead);
-
-          const playerGrid = document.createElement("div");
-          playerGrid.className = "player-grid";
-          applyResponsiveGridColumns(playerGrid, state.harmPlayers);
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `harm-round-meta-r${r}`,
+            state.harmPlayers,
+          );
 
           for (let p = 1; p <= state.harmPlayers; p++) {
-            const card = document.createElement("article");
-            card.className = "player-card";
-
-            const header = document.createElement("div");
-            header.className = "player-header";
-
-            const name = document.createElement("div");
-            name.className = `player-name player-theme-${p}`;
-            name.textContent = `${p}P`;
-
-            const headRight = document.createElement("div");
-            headRight.className = "player-head-right";
+            const { card, headRight } = createPlayerCardShell(p);
 
             const landSub = document.createElement("div");
             landSub.className = "harm-sub-chip";
@@ -1419,12 +1520,9 @@
             total.id = `harm-total-r${r}-p${p}`;
             total.textContent = "합계 0점";
 
-            header.appendChild(name);
             headRight.appendChild(landSub);
             headRight.appendChild(animalSub);
             headRight.appendChild(total);
-            header.appendChild(headRight);
-            card.appendChild(header);
 
             const grid = document.createElement("div");
             grid.className = "harm-grid";
@@ -1440,7 +1538,10 @@
               label.className = `harm-label ${item.cls}`;
               label.textContent = item.label;
 
-              const input = makeHarmInput(`harm-land-r${r}-p${p}-c${idx}`);
+              const input = createNumberInput({
+                id: `harm-land-r${r}-p${p}-c${idx}`,
+                onInput: recalculateHarmonies,
+              });
 
               row.appendChild(label);
               row.appendChild(input);
@@ -1460,7 +1561,10 @@
               label.className = "harm-label animal";
               label.textContent = `동물${a}`;
 
-              const input = makeHarmInput(`harm-animal-r${r}-p${p}-a${a}`);
+              const input = createNumberInput({
+                id: `harm-animal-r${r}-p${p}-a${a}`,
+                onInput: recalculateHarmonies,
+              });
 
               row.appendChild(label);
               row.appendChild(input);
@@ -1484,55 +1588,11 @@
         }
 
         applyValues(prevValues);
-        recalculateHarmonies();
+        recalculateGame("harmonies");
       }
 
       function recalculateHarmonies() {
-        const roundScores = [];
-
-        for (let r = 1; r <= state.harmRounds; r++) {
-          const entries = [];
-
-          for (let p = 1; p <= state.harmPlayers; p++) {
-            let landscapeTotal = 0;
-            for (let idx = 0; idx < HARM_LANDSCAPES.length; idx++) {
-              const inputEl = document.getElementById(
-                `harm-land-r${r}-p${p}-c${idx}`,
-              );
-              const score = Math.max(0, toScore(inputEl.value));
-              inputEl.value = String(score);
-              landscapeTotal += score;
-            }
-
-            let animalTotal = 0;
-            for (let a = 1; a <= HARM_ANIMAL_INPUTS; a++) {
-              const inputEl = document.getElementById(
-                `harm-animal-r${r}-p${p}-a${a}`,
-              );
-              const score = Math.max(0, toScore(inputEl.value));
-              inputEl.value = String(score);
-              animalTotal += score;
-            }
-
-            const total = landscapeTotal + animalTotal;
-            const landSubEl = document.getElementById(
-              `harm-land-sub-r${r}-p${p}`,
-            );
-            const animalSubEl = document.getElementById(
-              `harm-animal-sub-r${r}-p${p}`,
-            );
-            const totalEl = document.getElementById(`harm-total-r${r}-p${p}`);
-            landSubEl.textContent = `풍경 ${landscapeTotal}`;
-            animalSubEl.textContent = `동물 ${animalTotal}`;
-            totalEl.textContent = `합계 ${total}점`;
-            entries.push({ player: p, score: total });
-          }
-
-          roundScores.push({ round: r, entries });
-        }
-
-        renderRoundResults(roundScores, "harm-round-meta-r");
-        persistHarmonies();
+        recalculateByGameDef("harmonies");
       }
 
       function buildCenturyUI() {
@@ -1540,40 +1600,14 @@
         centRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.centRounds; r++) {
-          const roundPanel = document.createElement("section");
-          roundPanel.className = "panel round-block";
-
-          const roundHead = document.createElement("div");
-          roundHead.className = "round-head";
-
-          const title = document.createElement("h2");
-          title.className = "round-title";
-          title.textContent = `${r}R`;
-          roundHead.appendChild(title);
-
-          const roundMeta = document.createElement("div");
-          roundMeta.className = "round-meta";
-          roundMeta.id = `cent-round-meta-r${r}`;
-          roundHead.appendChild(roundMeta);
-          roundPanel.appendChild(roundHead);
-
-          const playerGrid = document.createElement("div");
-          playerGrid.className = "player-grid";
-          applyResponsiveGridColumns(playerGrid, state.centPlayers);
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `cent-round-meta-r${r}`,
+            state.centPlayers,
+          );
 
           for (let p = 1; p <= state.centPlayers; p++) {
-            const card = document.createElement("article");
-            card.className = "player-card";
-
-            const header = document.createElement("div");
-            header.className = "player-header";
-
-            const name = document.createElement("div");
-            name.className = `player-name player-theme-${p}`;
-            name.textContent = `${p}P`;
-
-            const headRight = document.createElement("div");
-            headRight.className = "player-head-right";
+            const { card, headRight } = createPlayerCardShell(p);
 
             const cardSub = document.createElement("div");
             cardSub.className = "harm-sub-chip";
@@ -1590,12 +1624,9 @@
             total.id = `cent-total-r${r}-p${p}`;
             total.textContent = "합계 0점";
 
-            header.appendChild(name);
             headRight.appendChild(cardSub);
             headRight.appendChild(bonusSub);
             headRight.appendChild(total);
-            header.appendChild(headRight);
-            card.appendChild(header);
 
             const grid = document.createElement("div");
             grid.className = "cent-grid";
@@ -1607,7 +1638,12 @@
             cardLabel.textContent = "승점카드";
             cardRow.appendChild(cardLabel);
             for (let i = 1; i <= 3; i++) {
-              cardRow.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
+              cardRow.appendChild(
+                createNumberInput({
+                  id: `cent-card-r${r}-p${p}-i${i}`,
+                  onInput: recalculateCentury,
+                }),
+              );
             }
             grid.appendChild(cardRow);
 
@@ -1618,7 +1654,12 @@
             cardRow2Label.textContent = "승점카드";
             cardRow2.appendChild(cardRow2Label);
             for (let i = 4; i <= 6; i++) {
-              cardRow2.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
+              cardRow2.appendChild(
+                createNumberInput({
+                  id: `cent-card-r${r}-p${p}-i${i}`,
+                  onInput: recalculateCentury,
+                }),
+              );
             }
             grid.appendChild(cardRow2);
 
@@ -1628,7 +1669,12 @@
             goldLabel.className = "cent-label";
             goldLabel.textContent = "동화 x3";
             goldRow.appendChild(goldLabel);
-            goldRow.appendChild(makeCenturyInput(`cent-gold-r${r}-p${p}`));
+            goldRow.appendChild(
+              createNumberInput({
+                id: `cent-gold-r${r}-p${p}`,
+                onInput: recalculateCentury,
+              }),
+            );
             goldRow.appendChild(document.createElement("div")).className = "cent-empty";
             goldRow.appendChild(document.createElement("div")).className = "cent-empty";
             grid.appendChild(goldRow);
@@ -1639,12 +1685,22 @@
             silverLabel.className = "cent-label";
             silverLabel.textContent = "은화 x1";
             silverRow.appendChild(silverLabel);
-            silverRow.appendChild(makeCenturyInput(`cent-silver-r${r}-p${p}`));
+            silverRow.appendChild(
+              createNumberInput({
+                id: `cent-silver-r${r}-p${p}`,
+                onInput: recalculateCentury,
+              }),
+            );
             const gemLabel = document.createElement("div");
             gemLabel.className = "cent-label";
             gemLabel.textContent = "수정(노랑제외)";
             silverRow.appendChild(gemLabel);
-            silverRow.appendChild(makeCenturyInput(`cent-gem-r${r}-p${p}`));
+            silverRow.appendChild(
+              createNumberInput({
+                id: `cent-gem-r${r}-p${p}`,
+                onInput: recalculateCentury,
+              }),
+            );
             grid.appendChild(silverRow);
 
             card.appendChild(grid);
@@ -1656,52 +1712,11 @@
         }
 
         applyValues(prevValues);
-        recalculateCentury();
+        recalculateGame("century");
       }
 
       function recalculateCentury() {
-        const roundScores = [];
-
-        for (let r = 1; r <= state.centRounds; r++) {
-          const entries = [];
-
-          for (let p = 1; p <= state.centPlayers; p++) {
-            let cardTotal = 0;
-            for (let i = 1; i <= 6; i++) {
-              const el = document.getElementById(`cent-card-r${r}-p${p}-i${i}`);
-              const val = Math.max(0, toScore(el.value));
-              el.value = String(val);
-              cardTotal += val;
-            }
-
-            const goldEl = document.getElementById(`cent-gold-r${r}-p${p}`);
-            const silverEl = document.getElementById(`cent-silver-r${r}-p${p}`);
-            const gemEl = document.getElementById(`cent-gem-r${r}-p${p}`);
-            const gold = Math.max(0, toScore(goldEl.value));
-            const silver = Math.max(0, toScore(silverEl.value));
-            const gem = Math.max(0, toScore(gemEl.value));
-            goldEl.value = String(gold);
-            silverEl.value = String(silver);
-            gemEl.value = String(gem);
-
-            const bonusTotal = gold * 3 + silver + gem;
-            const total = cardTotal + bonusTotal;
-
-            document.getElementById(`cent-card-sub-r${r}-p${p}`).textContent =
-              `카드 ${cardTotal}`;
-            document.getElementById(`cent-bonus-sub-r${r}-p${p}`).textContent =
-              `보너스 ${bonusTotal}`;
-            document.getElementById(`cent-total-r${r}-p${p}`).textContent =
-              `합계 ${total}점`;
-
-            entries.push({ player: p, score: total });
-          }
-
-          roundScores.push({ round: r, entries });
-        }
-
-        renderRoundResults(roundScores, "cent-round-meta-r");
-        persistCentury();
+        recalculateByGameDef("century");
       }
 
       function buildLostUI() {
@@ -1712,61 +1727,29 @@
         lostRoundContainerEl.innerHTML = "";
 
         for (let r = 1; r <= state.lostRounds; r++) {
-          const roundPanel = document.createElement("section");
-          roundPanel.className = "panel round-block";
-
-          const roundHead = document.createElement("div");
-          roundHead.className = "round-head";
-
-          const title = document.createElement("h2");
-          title.className = "round-title";
-          title.textContent = `${r}R`;
-          roundHead.appendChild(title);
-
-          const roundMeta = document.createElement("div");
-          roundMeta.className = "round-meta";
-          roundMeta.id = `lost-round-meta-r${r}`;
-          roundHead.appendChild(roundMeta);
-          roundPanel.appendChild(roundHead);
-
-          const playerGrid = document.createElement("div");
-          playerGrid.className = "player-grid";
-          applyResponsiveGridColumns(playerGrid, state.lostPlayers);
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `lost-round-meta-r${r}`,
+            state.lostPlayers,
+          );
 
           for (let p = 1; p <= state.lostPlayers; p++) {
-            const card = document.createElement("article");
-            card.className = "player-card";
+            const { card, headRight } = createPlayerCardShell(p);
 
-            const header = document.createElement("div");
-            header.className = "player-header";
-
-            const name = document.createElement("div");
-            name.className = `player-name player-theme-${p}`;
-            name.textContent = `${p}P`;
-
-            const headRight = document.createElement("div");
-            headRight.className = "player-head-right";
-
-            const bonusInline = document.createElement("div");
-            bonusInline.className = "lost-bonus-inline";
-            bonusInline.classList.add(`player-theme-${p}`);
             const bonusLabel = document.createElement("span");
-            bonusLabel.textContent = "⭐";
-            bonusInline.appendChild(bonusLabel);
-            bonusInline.appendChild(
-              makeLostInput(`lost-bonus-r${r}-p${p}`, 0, undefined),
-            );
+            bonusLabel.className = "inline-bonus-icon";
+            bonusLabel.textContent = "🃏";
+            const bonusInput = makeLostInput(`lost-bonus-r${r}-p${p}`, 0, undefined);
+            bonusInput.classList.add("inline-bonus-input");
 
             const roundTotal = document.createElement("div");
             roundTotal.className = `round-total-chip player-theme-${p}`;
             roundTotal.id = `lost-total-r${r}-p${p}`;
             roundTotal.textContent = "합계 0점";
 
-            header.appendChild(name);
-            headRight.appendChild(bonusInline);
+            headRight.appendChild(bonusLabel);
+            headRight.appendChild(bonusInput);
             headRight.appendChild(roundTotal);
-            header.appendChild(headRight);
-            card.appendChild(header);
 
             const grid = document.createElement("div");
             grid.className = "lost-grid";
@@ -1842,233 +1825,110 @@
         }
 
         applyValues(prevValues);
-        document
-          .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
-          .forEach((hidden) => {
-            syncLostWagerButtons(hidden.id);
-          });
-        recalculateLost();
+        syncAllLostWagerButtons();
+        recalculateGame("lostcity");
       }
 
       function recalculateLost() {
-        const roundScores = [];
-
-        for (let r = 1; r <= state.lostRounds; r++) {
-          const entries = [];
-
-          for (let p = 1; p <= state.lostPlayers; p++) {
-            let total = 0;
-            const bonusScoreEl = document.getElementById(
-              `lost-bonus-r${r}-p${p}`,
-            );
-            const bonus = Math.max(0, toScore(bonusScoreEl.value));
-            bonusScoreEl.value = String(bonus);
-
-            LOST_EXPEDITIONS.forEach((_, idx) => {
-              const sumEl = document.getElementById(
-                `lost-sum-r${r}-p${p}-e${idx}`,
-              );
-              const wagerEl = document.getElementById(
-                `lost-w-r${r}-p${p}-e${idx}`,
-              );
-              const bonusEl = document.getElementById(
-                `lost-b-r${r}-p${p}-e${idx}`,
-              );
-              const expScoreEl = document.getElementById(
-                `lost-exp-score-r${r}-p${p}-e${idx}`,
-              );
-
-              const sum = Math.max(0, toScore(sumEl.value));
-              const wager = Math.min(3, Math.max(0, toScore(wagerEl.value)));
-              const hasBonus = Boolean(bonusEl.checked);
-
-              sumEl.value = String(sum);
-              wagerEl.value = String(wager);
-
-              let expeditionScore = 0;
-              if (sum > 0 || wager > 0 || hasBonus) {
-                expeditionScore = (sum - 20) * (wager + 1);
-                if (hasBonus) {
-                  expeditionScore += 20;
-                }
-              }
-
-              expScoreEl.textContent = String(expeditionScore);
-              total += expeditionScore;
-            });
-
-            const totalEl = document.getElementById(`lost-total-r${r}-p${p}`);
-            total += bonus;
-            totalEl.textContent = `합계 ${total}점`;
-            entries.push({ player: p, score: total });
-          }
-
-          roundScores.push({ round: r, entries });
-        }
-
-        renderRoundResults(roundScores, "lost-round-meta-r");
-        persistLost();
+        recalculateByGameDef("lostcity");
       }
 
-      function resetScores() {
-        const inputs = roundContainerEl.querySelectorAll(
-          'input[type="number"]',
-        );
-        inputs.forEach((input) => {
-          input.value = "0";
-        });
-        recalculate();
+      const GAME_RUNTIME = {
+        castle: {
+          build: buildUI,
+          recalc: recalculate,
+          tabEl: tabCastleEl,
+          resetSelector: 'input[type="number"]',
+        },
+        lostcity: {
+          build: buildLostUI,
+          recalc: recalculateLost,
+          tabEl: tabLostCityEl,
+          resetSelector:
+            'input[type="number"], input[type="hidden"], input[type="checkbox"]',
+          resetExtra: syncAllLostWagerButtons,
+          afterRestore: syncAllLostWagerButtons,
+        },
+        harmonies: {
+          build: buildHarmoniesUI,
+          recalc: recalculateHarmonies,
+          tabEl: tabHarmoniesEl,
+          resetSelector: 'input[type="number"]',
+        },
+        century: {
+          build: buildCenturyUI,
+          recalc: recalculateCentury,
+          tabEl: tabCenturyEl,
+          resetSelector: 'input[type="number"]',
+        },
+      };
+
+      function buildGameUI(gameKey) {
+        GAME_RUNTIME[gameKey].build();
       }
 
-      function resetLostScores() {
-        const numberInputs = lostRoundContainerEl.querySelectorAll(
-          'input[type="number"]',
-        );
-        numberInputs.forEach((input) => {
-          input.value = "0";
-        });
-
-        const wagerHiddenInputs = lostRoundContainerEl.querySelectorAll(
-          'input[type="hidden"][id^="lost-w-"]',
-        );
-        wagerHiddenInputs.forEach((hidden) => {
-          hidden.value = "0";
-          syncLostWagerButtons(hidden.id);
-        });
-
-        const checks = lostRoundContainerEl.querySelectorAll(
-          'input[type="checkbox"]',
-        );
-        checks.forEach((check) => {
-          check.checked = false;
-        });
-
-        recalculateLost();
+      function recalculateGame(gameKey) {
+        GAME_RUNTIME[gameKey].recalc();
       }
 
-      function resetHarmoniesScores() {
-        const inputs = harmRoundContainerEl.querySelectorAll(
-          'input[type="number"]',
-        );
-        inputs.forEach((input) => {
-          input.value = "0";
-        });
-        recalculateHarmonies();
+      function resetGame(gameKey) {
+        const game = GAME_DEFS[gameKey];
+        const runtime = GAME_RUNTIME[gameKey];
+        game.roundContainerEl
+          .querySelectorAll(runtime.resetSelector || 'input[type="number"]')
+          .forEach((el) => {
+            if (el.type === "checkbox") {
+              el.checked = false;
+            } else {
+              el.value = "0";
+            }
+          });
+        runtime.resetExtra?.();
+        recalculateGame(gameKey);
       }
 
-      function resetCenturyScores() {
-        const inputs = centRoundContainerEl.querySelectorAll('input[type="number"]');
-        inputs.forEach((input) => {
-          input.value = "0";
+      function bindGameControls(gameKey, resetButtonEl) {
+        const game = GAME_DEFS[gameKey];
+        game.playerCountEl.addEventListener("change", () => {
+          state[game.statePlayersKey] = Number(game.playerCountEl.value) || 2;
+          buildGameUI(gameKey);
         });
-        recalculateCentury();
+        game.roundCountEl.addEventListener("change", () => {
+          state[game.stateRoundsKey] = Number(game.roundCountEl.value) || 1;
+          buildGameUI(gameKey);
+        });
+        resetButtonEl.addEventListener("click", () => {
+          resetGame(gameKey);
+        });
       }
 
-      playerCountEl.addEventListener("change", () => {
-        state.players = Number(playerCountEl.value) || 2;
-        buildUI();
-      });
-
-      roundCountEl.addEventListener("change", () => {
-        state.rounds = Number(roundCountEl.value) || 1;
-        buildUI();
-      });
-
-      resetBtn.addEventListener("click", resetScores);
-
-      lostPlayerCountEl.addEventListener("change", () => {
-        state.lostPlayers = Number(lostPlayerCountEl.value) || 2;
-        buildLostUI();
-      });
-
-      lostRoundCountEl.addEventListener("change", () => {
-        state.lostRounds = Number(lostRoundCountEl.value) || 1;
-        buildLostUI();
-      });
-
-      lostResetBtnEl.addEventListener("click", resetLostScores);
-
-      harmPlayerCountEl.addEventListener("change", () => {
-        state.harmPlayers = Number(harmPlayerCountEl.value) || 2;
-        buildHarmoniesUI();
-      });
-
-      harmRoundCountEl.addEventListener("change", () => {
-        state.harmRounds = Number(harmRoundCountEl.value) || 1;
-        buildHarmoniesUI();
-      });
-
-      harmResetBtnEl.addEventListener("click", resetHarmoniesScores);
-
-      centPlayerCountEl.addEventListener("change", () => {
-        state.centPlayers = Number(centPlayerCountEl.value) || 2;
-        buildCenturyUI();
-      });
-
-      centRoundCountEl.addEventListener("change", () => {
-        state.centRounds = Number(centRoundCountEl.value) || 1;
-        buildCenturyUI();
-      });
-
-      centResetBtnEl.addEventListener("click", resetCenturyScores);
+      bindGameControls("castle", resetBtn);
+      bindGameControls("lostcity", lostResetBtnEl);
+      bindGameControls("harmonies", harmResetBtnEl);
+      bindGameControls("century", centResetBtnEl);
 
       function setActiveGame(gameKey) {
-        const isCastle = gameKey === "castle";
-        const isLost = gameKey === "lostcity";
-        const isHarmonies = gameKey === "harmonies";
-        const isCentury = gameKey === "century";
-
-        tabCastleEl.classList.toggle("active", isCastle);
-        tabLostCityEl.classList.toggle("active", isLost);
-        tabHarmoniesEl.classList.toggle("active", isHarmonies);
-        tabCenturyEl.classList.toggle("active", isCentury);
-
-        pageCastleEl.classList.toggle("active", isCastle);
-        pageLostCityEl.classList.toggle("active", isLost);
-        pageHarmoniesEl.classList.toggle("active", isHarmonies);
-        pageCenturyEl.classList.toggle("active", isCentury);
-
-        document.body.classList.toggle("theme-castle", isCastle);
-        document.body.classList.toggle("theme-lost", isLost);
-        document.body.classList.toggle("theme-harmonies", isHarmonies);
-        document.body.classList.toggle("theme-century", isCentury);
+        Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
+          const isActive = key === gameKey;
+          runtime.tabEl.classList.toggle("active", isActive);
+          GAME_DEFS[key].pageEl.classList.toggle("active", isActive);
+          document.body.classList.toggle(`theme-${key === "lostcity" ? "lost" : key}`, isActive);
+        });
         saveStorageByKey(STORAGE_KEYS.ui, { activeGame: gameKey });
       }
 
-      tabCastleEl.addEventListener("click", () => {
-        setActiveGame("castle");
-      });
-
-      tabLostCityEl.addEventListener("click", () => {
-        setActiveGame("lostcity");
-      });
-
-      tabHarmoniesEl.addEventListener("click", () => {
-        setActiveGame("harmonies");
-      });
-
-      tabCenturyEl.addEventListener("click", () => {
-        setActiveGame("century");
+      Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
+        runtime.tabEl.addEventListener("click", () => {
+          setActiveGame(key);
+        });
       });
 
       window.addEventListener("resize", () => {
-        document
-          .querySelectorAll("#pageCastle .player-grid")
-          .forEach((grid) => {
-            applyResponsiveGridColumns(grid, state.players);
+        Object.entries(GAME_DEFS).forEach(([key, game]) => {
+          game.pageEl.querySelectorAll(".player-grid").forEach((grid) => {
+            applyResponsiveGridColumns(grid, state[game.statePlayersKey]);
           });
-        document
-          .querySelectorAll("#pageLostCity .player-grid")
-          .forEach((grid) => {
-            applyResponsiveGridColumns(grid, state.lostPlayers);
-          });
-        document
-          .querySelectorAll("#pageHarmonies .player-grid")
-          .forEach((grid) => {
-            applyResponsiveGridColumns(grid, state.harmPlayers);
-          });
-        document.querySelectorAll("#pageCentury .player-grid").forEach((grid) => {
-          applyResponsiveGridColumns(grid, state.centPlayers);
+          GAME_RUNTIME[key].afterRestore?.();
         });
       });
 
@@ -2079,25 +1939,15 @@
           ? storedUI.activeGame
           : "castle";
       setActiveGame(initialGame);
-      buildUI();
-      buildLostUI();
-      buildHarmoniesUI();
-      buildCenturyUI();
+      Object.keys(GAME_RUNTIME).forEach((gameKey) => buildGameUI(gameKey));
 
-      if (storedCastle || storedLost || storedHarmonies || storedCentury) {
-        applyValues(storedCastle?.values);
-        applyValues(storedLost?.values);
-        applyValues(storedHarmonies?.values);
-        applyValues(storedCentury?.values);
-        document
-          .querySelectorAll('#pageLostCity input[type="hidden"][id^="lost-w-"]')
-          .forEach((hidden) => {
-            syncLostWagerButtons(hidden.id);
-          });
-        recalculate();
-        recalculateLost();
-        recalculateHarmonies();
-        recalculateCentury();
+      const hasStoredValues = Object.values(storedByGame).some((v) => Boolean(v));
+      if (hasStoredValues) {
+        Object.entries(storedByGame).forEach(([gameKey, stored]) => {
+          applyValues(stored?.values);
+          GAME_RUNTIME[gameKey].afterRestore?.();
+          recalculateGame(gameKey);
+        });
       }
     </script>
   </body>
