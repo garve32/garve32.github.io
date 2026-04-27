@@ -405,27 +405,14 @@
       .cent-grid {
         display: grid;
         gap: 4px;
+        --cent-label-w: 84px;
       }
 
       .cent-row {
         display: grid;
-        grid-template-columns: 92px 1fr;
+        grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
         gap: 6px;
         align-items: center;
-      }
-
-      .cent-row-wide {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .cent-bonus-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(0, 104px);
-        gap: 6px;
-        align-items: start;
       }
 
       .cent-label {
@@ -436,57 +423,13 @@
         white-space: nowrap;
       }
 
-      .cent-cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .cent-cards input {
-        height: 26px;
-        padding: 3px 4px;
-        font-size: 16px;
-      }
-
       .cent-grid input {
         height: 26px;
         padding: 3px 4px;
       }
 
-      .cent-dual {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .cent-mini {
-        display: grid;
-        grid-template-columns: 92px 1fr;
-        align-items: center;
-        gap: 4px;
-      }
-
-      .cent-mini-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        white-space: nowrap;
-      }
-
-      .cent-gem-col {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 4px;
-        align-items: start;
-      }
-
-      .cent-gem-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        white-space: nowrap;
+      .cent-empty {
+        visibility: hidden;
       }
 
       .harm-sub-chip {
@@ -741,16 +684,8 @@
         }
 
         .cent-row {
-          grid-template-columns: 84px 1fr;
-          gap: 4px;
-        }
-
-        .cent-mini {
-          grid-template-columns: 84px 1fr;
-        }
-
-        .cent-bonus-layout {
-          grid-template-columns: minmax(0, 1fr) minmax(0, 92px);
+          --cent-label-w: 76px;
+          grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
           gap: 4px;
         }
       }
@@ -1670,56 +1605,47 @@
             const cardLabel = document.createElement("div");
             cardLabel.className = "cent-label";
             cardLabel.textContent = "승점카드";
-            const cards = document.createElement("div");
-            cards.className = "cent-cards";
-            for (let i = 1; i <= 6; i++) {
-              cards.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
-            }
             cardRow.appendChild(cardLabel);
-            cardRow.appendChild(cards);
+            for (let i = 1; i <= 3; i++) {
+              cardRow.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
+            }
             grid.appendChild(cardRow);
 
-            const coinRow = document.createElement("div");
-            coinRow.className = "cent-row-wide";
-            const bonusLayout = document.createElement("div");
-            bonusLayout.className = "cent-bonus-layout";
-            const coinDual = document.createElement("div");
-            coinDual.className = "cent-grid";
+            const cardRow2 = document.createElement("div");
+            cardRow2.className = "cent-row";
+            const cardRow2Label = document.createElement("div");
+            cardRow2Label.className = "cent-label cent-empty";
+            cardRow2Label.textContent = "승점카드";
+            cardRow2.appendChild(cardRow2Label);
+            for (let i = 4; i <= 6; i++) {
+              cardRow2.appendChild(makeCenturyInput(`cent-card-r${r}-p${p}-i${i}`));
+            }
+            grid.appendChild(cardRow2);
 
-            const goldMini = document.createElement("div");
-            goldMini.className = "cent-mini";
-            const goldMiniLabel = document.createElement("div");
-            goldMiniLabel.className = "cent-mini-label";
-            goldMiniLabel.textContent = "동화 x3";
-            const goldInput = makeCenturyInput(`cent-gold-r${r}-p${p}`);
-            goldMini.appendChild(goldMiniLabel);
-            goldMini.appendChild(goldInput);
+            const goldRow = document.createElement("div");
+            goldRow.className = "cent-row";
+            const goldLabel = document.createElement("div");
+            goldLabel.className = "cent-label";
+            goldLabel.textContent = "동화 x3";
+            goldRow.appendChild(goldLabel);
+            goldRow.appendChild(makeCenturyInput(`cent-gold-r${r}-p${p}`));
+            goldRow.appendChild(document.createElement("div")).className = "cent-empty";
+            goldRow.appendChild(document.createElement("div")).className = "cent-empty";
+            grid.appendChild(goldRow);
 
-            const silverMini = document.createElement("div");
-            silverMini.className = "cent-mini";
-            const silverMiniLabel = document.createElement("div");
-            silverMiniLabel.className = "cent-mini-label";
-            silverMiniLabel.textContent = "은화 x1";
-            const silverInput = makeCenturyInput(`cent-silver-r${r}-p${p}`);
-            silverMini.appendChild(silverMiniLabel);
-            silverMini.appendChild(silverInput);
-
-            coinDual.appendChild(goldMini);
-            coinDual.appendChild(silverMini);
-            bonusLayout.appendChild(coinDual);
-
-            const gemCol = document.createElement("div");
-            gemCol.className = "cent-gem-col";
+            const silverRow = document.createElement("div");
+            silverRow.className = "cent-row";
+            const silverLabel = document.createElement("div");
+            silverLabel.className = "cent-label";
+            silverLabel.textContent = "은화 x1";
+            silverRow.appendChild(silverLabel);
+            silverRow.appendChild(makeCenturyInput(`cent-silver-r${r}-p${p}`));
             const gemLabel = document.createElement("div");
-            gemLabel.className = "cent-gem-label";
+            gemLabel.className = "cent-label";
             gemLabel.textContent = "수정(노랑제외)";
-            const gemInput = makeCenturyInput(`cent-gem-r${r}-p${p}`);
-            gemCol.appendChild(gemLabel);
-            gemCol.appendChild(gemInput);
-            bonusLayout.appendChild(gemCol);
-
-            coinRow.appendChild(bonusLayout);
-            grid.appendChild(coinRow);
+            silverRow.appendChild(gemLabel);
+            silverRow.appendChild(makeCenturyInput(`cent-gem-r${r}-p${p}`));
+            grid.appendChild(silverRow);
 
             card.appendChild(grid);
             playerGrid.appendChild(card);
