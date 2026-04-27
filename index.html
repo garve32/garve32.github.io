@@ -19,29 +19,29 @@
       }
 
       body.theme-castle {
-        --bg: #f4efe6;
-        --card: #fffdf8;
-        --line: #d9ccb7;
-        --text: #2f2418;
-        --muted: #6d5b46;
-        --primary: #7c4d2f;
-        --danger: #b44b42;
-        --chip: #f2e6d3;
-        --shadow: 0 12px 26px rgba(92, 67, 40, 0.14);
-        --shadow-soft: 0 4px 10px rgba(92, 67, 40, 0.09);
+        --bg: #eaf6ff;
+        --card: #fbfeff;
+        --line: #add9ee;
+        --text: #16394a;
+        --muted: #4c778b;
+        --primary: #5ca1c0;
+        --danger: #d4685a;
+        --chip: #dff1fb;
+        --shadow: 0 12px 26px rgba(39, 105, 134, 0.16);
+        --shadow-soft: 0 4px 10px rgba(39, 105, 134, 0.1);
       }
 
       body.theme-lost {
-        --bg: #f2ecdf;
-        --card: #fffbf3;
-        --line: #decfb3;
-        --text: #352a1e;
-        --muted: #75624a;
-        --primary: #2d6f9f;
-        --danger: #c15445;
-        --chip: #f8eedb;
-        --shadow: 0 12px 26px rgba(86, 66, 39, 0.13);
-        --shadow-soft: 0 4px 10px rgba(86, 66, 39, 0.08);
+        --bg: #f8f3e8;
+        --card: #fffdf8;
+        --line: #e2d1af;
+        --text: #2b3f61;
+        --muted: #5b6f90;
+        --primary: #c57e29;
+        --danger: #0d4e96;
+        --chip: #f7ecd8;
+        --shadow: 0 12px 26px rgba(126, 86, 30, 0.18);
+        --shadow-soft: 0 4px 10px rgba(126, 86, 30, 0.11);
       }
 
       body.theme-harmonies {
@@ -252,6 +252,64 @@
         font-weight: 700;
         color: var(--muted);
         text-align: center;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        padding: 2px 4px;
+      }
+
+      .lost-label.zone-1 {
+        color: #8a6500;
+        background: #fff3bf;
+        border-color: #f1d36d;
+      }
+
+      .lost-row.zone-1 {
+        --lost-zone-accent: #e0bf62;
+        --lost-zone-accent-text: #ffffff;
+      }
+
+      .lost-label.zone-2 {
+        color: #0f6071;
+        background: #d9f4f8;
+        border-color: #81d2dd;
+      }
+
+      .lost-row.zone-2 {
+        --lost-zone-accent: #58accb;
+        --lost-zone-accent-text: #ffffff;
+      }
+
+      .lost-label.zone-3 {
+        color: #5f3f9f;
+        background: #efe6ff;
+        border-color: #cbb0ff;
+      }
+
+      .lost-row.zone-3 {
+        --lost-zone-accent: #8d72bc;
+        --lost-zone-accent-text: #ffffff;
+      }
+
+      .lost-label.zone-4 {
+        color: #2f7a2f;
+        background: #e5f5e5;
+        border-color: #b7dfb7;
+      }
+
+      .lost-row.zone-4 {
+        --lost-zone-accent: #68ad6f;
+        --lost-zone-accent-text: #ffffff;
+      }
+
+      .lost-label.zone-5 {
+        color: #a45a18;
+        background: #ffe7cf;
+        border-color: #f2c79d;
+      }
+
+      .lost-row.zone-5 {
+        --lost-zone-accent: #c96a5f;
+        --lost-zone-accent-text: #ffffff;
       }
 
       .lost-row input {
@@ -286,8 +344,8 @@
       }
 
       .lost-wager-btn.active {
-        background: var(--primary);
-        color: #fff;
+        background: var(--lost-zone-accent, var(--primary));
+        color: var(--lost-zone-accent-text, #fff);
       }
 
       .lost-toggle {
@@ -1207,11 +1265,11 @@
       }
 
       const LOST_EXPEDITIONS = [
-        { key: "z1", label: "1구역" },
-        { key: "z2", label: "2구역" },
-        { key: "z3", label: "3구역" },
-        { key: "z4", label: "4구역" },
-        { key: "z5", label: "5구역" },
+        { key: "z1", label: "1구역", cls: "zone-1" },
+        { key: "z2", label: "2구역", cls: "zone-2" },
+        { key: "z3", label: "3구역", cls: "zone-3" },
+        { key: "z4", label: "4구역", cls: "zone-4" },
+        { key: "z5", label: "5구역", cls: "zone-5" },
       ];
 
       function makeLostInput(id, min, max) {
@@ -1906,10 +1964,10 @@
 
             LOST_EXPEDITIONS.forEach((exp, idx) => {
               const row = document.createElement("div");
-              row.className = "lost-row";
+              row.className = `lost-row ${exp.cls}`;
 
               const label = document.createElement("div");
-              label.className = "lost-label";
+              label.className = `lost-label ${exp.cls}`;
               label.textContent = exp.label;
 
               const sumInput = makeLostInput(
