@@ -70,6 +70,19 @@
         --shadow-soft: 0 4px 10px rgba(75, 58, 126, 0.09);
       }
 
+      body.theme-renaissance {
+        --bg: #f4eee4;
+        --card: #fffdf8;
+        --line: #dccab0;
+        --text: #34251f;
+        --muted: #806b5c;
+        --primary: #8f3f37;
+        --danger: #8f3f37;
+        --chip: #f2e5d2;
+        --shadow: 0 12px 28px rgba(88, 54, 35, 0.14);
+        --shadow-soft: 0 4px 10px rgba(88, 54, 35, 0.09);
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -91,6 +104,7 @@
       .wrap {
         max-width: 1100px;
         margin: 0 auto;
+        min-width: 0;
       }
 
       .title {
@@ -129,6 +143,7 @@
         display: flex;
         flex-direction: column;
         gap: 4px;
+        min-width: 0;
       }
 
       label {
@@ -139,6 +154,7 @@
       select,
       input {
         width: 100%;
+        min-width: 0;
         border: 1px solid var(--line);
         border-radius: 12px;
         padding: 10px;
@@ -198,10 +214,21 @@
       }
 
       .game-tabs {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        position: sticky;
+        top: 8px;
+        z-index: 20;
+        display: flex;
         gap: 6px;
-        padding: 4px;
+        padding: 5px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        background: color-mix(in srgb, var(--card) 76%, transparent);
+        backdrop-filter: blur(16px) saturate(135%);
+        -webkit-backdrop-filter: blur(16px) saturate(135%);
+      }
+
+      .game-tabs::-webkit-scrollbar {
+        display: none;
       }
 
       .tab-btn {
@@ -217,6 +244,8 @@
         font-size: 13px;
         font-weight: 700;
         box-shadow: var(--shadow-soft);
+        flex: 1 0 104px;
+        white-space: nowrap;
       }
 
       .tab-btn.active {
@@ -640,6 +669,114 @@
         border-radius: 12px;
         padding: 8px;
         background: #fff;
+        min-width: 0;
+      }
+
+      .rena-grid {
+        display: grid;
+        gap: 4px;
+        --rena-label-w: 74px;
+      }
+
+      .rena-row {
+        display: grid;
+        grid-template-columns: var(--rena-label-w) repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        align-items: center;
+      }
+
+      .rena-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        white-space: nowrap;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        padding: 2px 4px;
+      }
+
+      .rena-label.card {
+        color: #71362f;
+        background: #f4ded6;
+        border-color: #d9a89b;
+      }
+
+      .rena-label.faith {
+        color: #7d2940;
+        background: #f5dce3;
+        border-color: #dca6b5;
+      }
+
+      .rena-label.resource {
+        color: #76521e;
+        background: #f5e6bd;
+        border-color: #d9bd77;
+      }
+
+      .rena-row input[type="number"] {
+        height: 26px;
+        padding: 3px 2px;
+      }
+
+      .rena-empty {
+        visibility: hidden;
+      }
+
+      .rena-pope-group {
+        grid-column: span 3;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .rena-pope {
+        position: relative;
+        min-height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        background: #fff;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .rena-pope input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .rena-pope:has(input:checked) {
+        border-color: var(--primary);
+        background: color-mix(in srgb, var(--primary) 13%, white);
+        color: var(--primary);
+        box-shadow: inset 0 0 0 1px var(--primary);
+      }
+
+      .rena-sub-chip {
+        font-size: 11px;
+        font-weight: 800;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .rena-resource-cell {
+        min-width: 0;
+        display: grid;
+        gap: 2px;
+      }
+
+      .rena-resource-name {
+        color: var(--muted);
+        font-size: 9px;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1;
       }
 
       .player-header {
@@ -754,6 +891,10 @@
         .controls {
           grid-template-columns: repeat(3, minmax(0, 1fr));
         }
+
+        .game-tabs {
+          top: 12px;
+        }
       }
 
       @media (max-width: 420px) {
@@ -782,6 +923,14 @@
         .cent-row {
           --cent-label-w: 68px;
           grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
+          gap: 4px;
+        }
+
+        .rena-grid {
+          --rena-label-w: 68px;
+        }
+
+        .rena-row {
           gap: 4px;
         }
       }
@@ -873,6 +1022,9 @@
         </button>
         <button id="tabCentury" type="button" class="tab-btn">
           센추리:골렘
+        </button>
+        <button id="tabRenaissance" type="button" class="tab-btn">
+          르네상스의 거장들
         </button>
       </section>
 
@@ -1000,6 +1152,37 @@
           </button>
         </div>
       </section>
+
+      <section id="pageRenaissance" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <select id="renaPlayerCount" aria-label="플레이어 수">
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+            </select>
+          </div>
+          <div class="field">
+            <select id="renaRoundCount" aria-label="게임 기록 수">
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
+            </select>
+          </div>
+          <div class="field">
+            <button id="renaResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="renaRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="renaAddRoundBtn" type="button" class="round-add-btn">
+            게임 기록 추가 +
+          </button>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -1012,6 +1195,8 @@
         harmRounds: 1,
         centPlayers: 2,
         centRounds: 1,
+        renaPlayers: 2,
+        renaRounds: 1,
       };
 
       const STORAGE_KEYS = {
@@ -1019,6 +1204,7 @@
         lost: "board-score-lost-v1",
         harmonies: "board-score-harmonies-v1",
         century: "board-score-century-v1",
+        renaissance: "board-score-renaissance-v1",
         ui: "board-score-ui-v1",
       };
 
@@ -1031,10 +1217,12 @@
       const tabLostCityEl = document.getElementById("tabLostCity");
       const tabHarmoniesEl = document.getElementById("tabHarmonies");
       const tabCenturyEl = document.getElementById("tabCentury");
+      const tabRenaissanceEl = document.getElementById("tabRenaissance");
       const pageCastleEl = document.getElementById("pageCastle");
       const pageLostCityEl = document.getElementById("pageLostCity");
       const pageHarmoniesEl = document.getElementById("pageHarmonies");
       const pageCenturyEl = document.getElementById("pageCentury");
+      const pageRenaissanceEl = document.getElementById("pageRenaissance");
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
@@ -1053,6 +1241,12 @@
       const centAddRoundBtnEl = document.getElementById("centAddRoundBtn");
       const centRoundContainerEl =
         document.getElementById("centRoundContainer");
+      const renaPlayerCountEl = document.getElementById("renaPlayerCount");
+      const renaRoundCountEl = document.getElementById("renaRoundCount");
+      const renaResetBtnEl = document.getElementById("renaResetBtn");
+      const renaAddRoundBtnEl = document.getElementById("renaAddRoundBtn");
+      const renaRoundContainerEl =
+        document.getElementById("renaRoundContainer");
 
       const GAME_DEFS = {
         castle: {
@@ -1099,6 +1293,17 @@
           addRoundBtnEl: centAddRoundBtnEl,
           roundContainerEl: centRoundContainerEl,
           valueSelector: 'input[type="number"]',
+        },
+        renaissance: {
+          statePlayersKey: "renaPlayers",
+          stateRoundsKey: "renaRounds",
+          storageKey: STORAGE_KEYS.renaissance,
+          pageEl: pageRenaissanceEl,
+          playerCountEl: renaPlayerCountEl,
+          roundCountEl: renaRoundCountEl,
+          addRoundBtnEl: renaAddRoundBtnEl,
+          roundContainerEl: renaRoundContainerEl,
+          valueSelector: 'input[type="number"], input[type="checkbox"]',
         },
       };
 
@@ -1568,6 +1773,64 @@
         return total;
       }
 
+      function getRenaissanceFaithScore(position) {
+        const spaces = [
+          [24, 20],
+          [21, 16],
+          [18, 12],
+          [15, 9],
+          [12, 6],
+          [9, 4],
+          [6, 2],
+          [3, 1],
+        ];
+        const match = spaces.find(([space]) => position >= space);
+        return match ? match[1] : 0;
+      }
+
+      function getRenaissanceResourceCount(r, p) {
+        return getNormalizedValueById(
+          `rena-resource-r${r}-p${p}`,
+          { min: 0 },
+        );
+      }
+
+      function computeRenaissanceRoundScore(r, p) {
+        const development = sumNormalizedRange(
+          1,
+          3,
+          (i) => `rena-dev-col-r${r}-p${p}-i${i}`,
+          { min: 0 },
+        );
+        const faithPosition = getNormalizedValueById(
+          `rena-faith-r${r}-p${p}`,
+          { min: 0, max: 24 },
+        );
+        const faith = getRenaissanceFaithScore(faithPosition);
+        let pope = 0;
+        [2, 3, 4].forEach((value) => {
+          if (document.getElementById(`rena-pope-${value}-r${r}-p${p}`).checked) {
+            pope += value;
+          }
+        });
+        const leaders = getNormalizedValueById(
+          `rena-leader-r${r}-p${p}`,
+          { min: 0 },
+        );
+        const resources = getRenaissanceResourceCount(r, p);
+        const resourceScore = Math.floor(resources / 5);
+        const total = development + faith + pope + leaders + resourceScore;
+
+        setTextById(`rena-dev-label-r${r}-p${p}`, `개발 ${development}`);
+        setTextById(
+          `rena-faith-label-r${r}-p${p}`,
+          `신앙 ${faith + pope}`,
+        );
+        setTextById(`rena-resource-label-r${r}-p${p}`, `자원 ${resourceScore}`);
+        setTextById(`rena-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
       const GAME_RECALC_DEFS = {
         castle: {
           getRoundCount: () => state.rounds,
@@ -1593,6 +1856,13 @@
           metaPrefix: "lost-round-meta-r",
           computeScore: computeLostRoundScore,
         },
+        renaissance: {
+          getRoundCount: () => state.renaRounds,
+          getPlayerCount: () => state.renaPlayers,
+          metaPrefix: "rena-round-meta-r",
+          computeScore: computeRenaissanceRoundScore,
+          tieBreakByPlayer: getRenaissanceResourceCount,
+        },
       };
 
       function recalculateByGameDef(gameKey) {
@@ -1601,6 +1871,7 @@
           def.getRoundCount(),
           def.getPlayerCount(),
           def.computeScore,
+          def.tieBreakByPlayer,
         );
         finalizeRecalculation(roundScores, def.metaPrefix, gameKey);
       }
@@ -1615,10 +1886,21 @@
           metaEl.innerHTML = "";
 
           const maxScore = Math.max(...entries.map((entry) => entry.score));
+          const scoreLeaders = entries.filter(
+            (entry) => entry.score === maxScore,
+          );
+          const usesTieBreak = scoreLeaders.some((entry) =>
+            Number.isFinite(entry.tieBreak),
+          );
+          const maxTieBreak = usesTieBreak
+            ? Math.max(...scoreLeaders.map((entry) => entry.tieBreak))
+            : null;
 
           entries.forEach((entry) => {
             const chip = document.createElement("span");
-            const isWin = entry.score === maxScore;
+            const isWin =
+              entry.score === maxScore &&
+              (!usesTieBreak || entry.tieBreak === maxTieBreak);
             chip.className = `round-result-chip player-theme-${entry.player} ${isWin ? "win" : "lose"}`;
 
             const scoreText = document.createElement("span");
@@ -1635,12 +1917,23 @@
         });
       }
 
-      function collectRoundScores(roundCount, playerCount, scoreByPlayer) {
+      function collectRoundScores(
+        roundCount,
+        playerCount,
+        scoreByPlayer,
+        tieBreakByPlayer,
+      ) {
         const roundScores = [];
         for (let r = 1; r <= roundCount; r++) {
           const entries = [];
           for (let p = 1; p <= playerCount; p++) {
-            entries.push({ player: p, score: scoreByPlayer(r, p) });
+            entries.push({
+              player: p,
+              score: scoreByPlayer(r, p),
+              tieBreak: tieBreakByPlayer
+                ? tieBreakByPlayer(r, p)
+                : undefined,
+            });
           }
           roundScores.push({ round: r, entries });
         }
@@ -1897,6 +2190,148 @@
         recalculateByGameDef("century");
       }
 
+      function makeRenaissanceInput(id, onInput, max) {
+        return createNumberInput({
+          id,
+          min: 0,
+          max,
+          onInput,
+        });
+      }
+
+      function createRenaissanceLabel(text, id, variant) {
+        const label = document.createElement("div");
+        label.className = `rena-label${variant ? ` ${variant}` : ""}`;
+        label.textContent = text;
+        if (id) label.id = id;
+        return label;
+      }
+
+      function buildRenaissanceUI() {
+        const prevValues = collectValues(
+          renaRoundContainerEl,
+          'input[type="number"], input[type="checkbox"]',
+        );
+        renaRoundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.renaRounds; r++) {
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `rena-round-meta-r${r}`,
+            state.renaPlayers,
+          );
+          roundPanel.querySelector(".round-title").textContent = `${r}게임`;
+
+          for (let p = 1; p <= state.renaPlayers; p++) {
+            const { card, headRight } = createPlayerCardShell(p);
+            const total = document.createElement("div");
+            total.className = `round-total-chip player-theme-${p}`;
+            total.id = `rena-total-r${r}-p${p}`;
+            total.textContent = "합계 0점";
+            headRight.appendChild(total);
+
+            const grid = document.createElement("div");
+            grid.className = "rena-grid";
+
+            const developmentRow = document.createElement("div");
+            developmentRow.className = "rena-row";
+            developmentRow.appendChild(
+              createRenaissanceLabel(
+                "개발 0",
+                `rena-dev-label-r${r}-p${p}`,
+                "card",
+              ),
+            );
+            ["1열", "2열", "3열", "지도자"].forEach((name, index) => {
+              const scoreCell = document.createElement("div");
+              scoreCell.className = "rena-resource-cell";
+              const scoreName = document.createElement("span");
+              scoreName.className = "rena-resource-name";
+              scoreName.textContent = name;
+              const input = makeRenaissanceInput(
+                index < 3
+                  ? `rena-dev-col-r${r}-p${p}-i${index + 1}`
+                  : `rena-leader-r${r}-p${p}`,
+                recalculateRenaissance,
+              );
+              input.setAttribute("aria-label", `${name} 카드 점수 합계`);
+              scoreCell.appendChild(scoreName);
+              scoreCell.appendChild(input);
+              developmentRow.appendChild(scoreCell);
+            });
+            grid.appendChild(developmentRow);
+
+            const faithRow = document.createElement("div");
+            faithRow.className = "rena-row";
+            faithRow.appendChild(
+              createRenaissanceLabel(
+                "신앙 0",
+                `rena-faith-label-r${r}-p${p}`,
+                "faith",
+              ),
+            );
+            const faithInput = makeRenaissanceInput(
+              `rena-faith-r${r}-p${p}`,
+              recalculateRenaissance,
+              24,
+            );
+            faithInput.title = "신앙 트랙 위치 (0–24)";
+            faithInput.setAttribute("aria-label", "신앙 트랙 위치");
+            faithRow.appendChild(faithInput);
+            const popeGroup = document.createElement("div");
+            popeGroup.className = "rena-pope-group";
+            [2, 3, 4].forEach((value) => {
+              const popeLabel = document.createElement("label");
+              popeLabel.className = "rena-pope";
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.id = `rena-pope-${value}-r${r}-p${p}`;
+              checkbox.addEventListener("change", recalculateRenaissance);
+              popeLabel.appendChild(checkbox);
+              popeLabel.append(`${value}점`);
+              popeGroup.appendChild(popeLabel);
+            });
+            faithRow.appendChild(popeGroup);
+            grid.appendChild(faithRow);
+
+            const resourceRow = document.createElement("div");
+            resourceRow.className = "rena-row";
+            resourceRow.appendChild(
+              createRenaissanceLabel(
+                "자원 0",
+                `rena-resource-label-r${r}-p${p}`,
+                "resource",
+              ),
+            );
+            const resourceInput = makeRenaissanceInput(
+              `rena-resource-r${r}-p${p}`,
+              recalculateRenaissance,
+            );
+            resourceInput.setAttribute("aria-label", "남은 자원 총개수");
+            resourceRow.appendChild(resourceInput);
+            for (let i = 0; i < 3; i++) {
+              const empty = document.createElement("div");
+              empty.className = "rena-empty";
+              resourceRow.appendChild(empty);
+            }
+            grid.appendChild(resourceRow);
+
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          renaRoundContainerEl.appendChild(roundPanel);
+        }
+
+        applyValues(prevValues);
+        recalculateGame("renaissance");
+      }
+
+      function recalculateRenaissance() {
+        recalculateByGameDef("renaissance");
+      }
+
       function buildLostUI() {
         const prevValues = collectValues(
           lostRoundContainerEl,
@@ -2043,6 +2478,12 @@
           tabEl: tabCenturyEl,
           resetSelector: 'input[type="number"]',
         },
+        renaissance: {
+          build: buildRenaissanceUI,
+          recalc: recalculateRenaissance,
+          tabEl: tabRenaissanceEl,
+          resetSelector: 'input[type="number"], input[type="checkbox"]',
+        },
       };
 
       function buildGameUI(gameKey) {
@@ -2091,6 +2532,7 @@
       bindGameControls("lostcity", lostResetBtnEl);
       bindGameControls("harmonies", harmResetBtnEl);
       bindGameControls("century", centResetBtnEl);
+      bindGameControls("renaissance", renaResetBtnEl);
 
       function setActiveGame(gameKey) {
         Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
@@ -2103,6 +2545,11 @@
           );
         });
         saveStorageByKey(STORAGE_KEYS.ui, { activeGame: gameKey });
+        GAME_RUNTIME[gameKey].tabEl.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
       }
 
       Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
@@ -2123,7 +2570,8 @@
       const initialGame =
         storedUI?.activeGame === "lostcity" ||
         storedUI?.activeGame === "harmonies" ||
-        storedUI?.activeGame === "century"
+        storedUI?.activeGame === "century" ||
+        storedUI?.activeGame === "renaissance"
           ? storedUI.activeGame
           : "castle";
       setActiveGame(initialGame);
