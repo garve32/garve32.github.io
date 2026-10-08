@@ -6,81 +6,47 @@
     <title>보드게임 점수 계산기</title>
     <style>
       :root {
-        --bg: #f3f6fa;
-        --card: #ffffff;
-        --line: #d8e1eb;
-        --text: #172033;
-        --muted: #5e6d85;
-        --primary: #2a62f2;
-        --danger: #d84c57;
-        --chip: #eef3ff;
-        --shadow: 0 10px 28px rgba(17, 24, 39, 0.08);
-        --shadow-soft: 0 4px 12px rgba(17, 24, 39, 0.06);
+        --bg: #e7e9e5;
+        --card: #fafbf8;
+        --line: #aeb3ad;
+        --line-strong: #777d77;
+        --text: #171a18;
+        --muted: #626862;
+        --primary: #26312b;
+        --danger: #a23b32;
+        --chip: #eceee9;
+        --shadow: none;
+        --shadow-soft: 2px 2px 0 rgba(23, 26, 24, 0.12);
       }
 
       body.theme-castle {
-        --bg: #eaf6ff;
-        --card: #fbfeff;
-        --line: #add9ee;
-        --text: #16394a;
-        --muted: #4c778b;
-        --primary: #5ca1c0;
-        --danger: #d4685a;
-        --chip: #dff1fb;
-        --shadow: 0 12px 26px rgba(39, 105, 134, 0.16);
-        --shadow-soft: 0 4px 10px rgba(39, 105, 134, 0.1);
+        --primary: #287695;
+        --danger: #a94436;
+        --chip: #e7f0f2;
       }
 
       body.theme-lost {
-        --bg: #f8f3e8;
-        --card: #fffdf8;
-        --line: #e2d1af;
-        --text: #2b3f61;
-        --muted: #5b6f90;
-        --primary: #c57e29;
-        --danger: #0d4e96;
-        --chip: #f7ecd8;
-        --shadow: 0 12px 26px rgba(126, 86, 30, 0.18);
-        --shadow-soft: 0 4px 10px rgba(126, 86, 30, 0.11);
+        --primary: #b5651d;
+        --danger: #285789;
+        --chip: #f2e9dc;
       }
 
       body.theme-harmonies {
-        --bg: #edf7f2;
-        --card: #fbfffd;
-        --line: #c8e0d3;
-        --text: #17382d;
-        --muted: #587a6b;
-        --primary: #2f9d7e;
-        --danger: #c45e4f;
-        --chip: #e6f5ee;
-        --shadow: 0 12px 26px rgba(32, 107, 83, 0.13);
-        --shadow-soft: 0 4px 10px rgba(32, 107, 83, 0.08);
+        --primary: #277c63;
+        --danger: #a84638;
+        --chip: #e4efe9;
       }
 
       body.theme-century {
-        --bg: #f4f0fa;
-        --card: #fefcff;
-        --line: #dccfee;
-        --text: #2f2442;
-        --muted: #6f618b;
-        --primary: #5a4fcf;
-        --danger: #c3567d;
-        --chip: #efe8fb;
-        --shadow: 0 12px 26px rgba(75, 58, 126, 0.15);
-        --shadow-soft: 0 4px 10px rgba(75, 58, 126, 0.09);
+        --primary: #584aa5;
+        --danger: #a43f66;
+        --chip: #ece8f2;
       }
 
       body.theme-renaissance {
-        --bg: #f4eee4;
-        --card: #fffdf8;
-        --line: #dccab0;
-        --text: #34251f;
-        --muted: #806b5c;
-        --primary: #8f3f37;
-        --danger: #8f3f37;
-        --chip: #f2e5d2;
-        --shadow: 0 12px 28px rgba(88, 54, 35, 0.14);
-        --shadow-soft: 0 4px 10px rgba(88, 54, 35, 0.09);
+        --primary: #8d3e35;
+        --danger: #8d3e35;
+        --chip: #f0e7dc;
       }
 
       * {
@@ -1006,6 +972,144 @@
           max-width: 1480px;
         }
       }
+
+      /* Industrial score-board skin: dense, flat and tactile. */
+      body {
+        letter-spacing: -0.01em;
+        transition: background 0.18s ease;
+      }
+
+      .panel {
+        border-color: var(--line);
+        border-radius: 6px;
+        box-shadow: none;
+      }
+
+      select,
+      input {
+        border-color: var(--line-strong);
+        border-radius: 3px;
+        background: #ffffff;
+      }
+
+      select:focus,
+      input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px
+          color-mix(in srgb, var(--primary) 24%, transparent);
+      }
+
+      input[type="number"],
+      .round-total-chip,
+      .round-result-chip,
+      .lost-exp-score,
+      .harm-sub-chip {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0;
+      }
+
+      button {
+        border-radius: 4px;
+      }
+
+      button:active {
+        transform: translate(1px, 1px);
+        box-shadow: none;
+      }
+
+      .controls select,
+      .controls button {
+        border-radius: 3px;
+      }
+
+      .btn-danger {
+        border: 1px solid color-mix(in srgb, var(--danger) 78%, black);
+        box-shadow: 2px 2px 0 rgba(23, 26, 24, 0.16);
+      }
+
+      .game-tabs {
+        background: #dfe2dd;
+        border-color: var(--line-strong);
+        box-shadow: 3px 3px 0 rgba(23, 26, 24, 0.12);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+      }
+
+      .tab-btn {
+        border-color: var(--line-strong);
+        border-radius: 3px;
+        background: #f8f9f6;
+        box-shadow: none;
+      }
+
+      .tab-btn.active {
+        border-color: color-mix(in srgb, var(--primary) 75%, black);
+        box-shadow: 2px 2px 0 color-mix(in srgb, var(--primary) 48%, black);
+      }
+
+      .player-card {
+        border-color: var(--line-strong);
+        border-radius: 4px;
+        background: #ffffff;
+      }
+
+      .player-name,
+      .round-total-chip,
+      .round-result-chip,
+      .harm-sub-chip {
+        border-radius: 3px;
+      }
+
+      .round-result-chip {
+        padding: 3px 6px;
+        background: #ffffff;
+      }
+
+      .round-result-chip.win {
+        border-color: var(--p-strong, var(--line-strong));
+        box-shadow: 2px 2px 0 color-mix(in srgb, var(--p-strong, #222) 22%, transparent);
+      }
+
+      .round-result-chip.lose {
+        opacity: 0.58;
+      }
+
+      .crown-slot {
+        width: auto;
+        min-width: 1.8em;
+        font-family: "Pretendard", "Noto Sans KR", sans-serif;
+        font-size: 9px;
+        font-weight: 800;
+      }
+
+      .round-add-btn {
+        border-radius: 3px;
+        background: #f8f9f6;
+      }
+
+      .lost-label,
+      .lost-wager-btn,
+      .lost-toggle,
+      .harm-label,
+      .cent-label,
+      .rena-label,
+      .rena-pope {
+        border-radius: 3px;
+      }
+
+      .lost-wager-btn.active,
+      .rena-pope:has(input:checked) {
+        box-shadow: 1px 1px 0 rgba(23, 26, 24, 0.18);
+      }
+
+      .inline-bonus-icon {
+        min-width: 2.5em;
+        font-family: "SFMono-Regular", Consolas, monospace;
+        font-size: 9px;
+        letter-spacing: 0.04em;
+        text-align: right;
+      }
     </style>
   </head>
   <body>
@@ -1653,7 +1757,7 @@
 
             const keyLabel = document.createElement("span");
             keyLabel.className = "inline-bonus-icon";
-            keyLabel.textContent = "🔑";
+            keyLabel.textContent = "KEY";
             const keyInput = makeKeyInput(r, p);
             keyInput.classList.add("inline-bonus-input");
 
@@ -1908,7 +2012,7 @@
 
             const crown = document.createElement("span");
             crown.className = `crown-slot${isWin ? "" : " hidden"}`;
-            crown.textContent = "👑";
+            crown.textContent = "1위";
 
             chip.appendChild(scoreText);
             chip.appendChild(crown);
@@ -2351,7 +2455,7 @@
 
             const bonusLabel = document.createElement("span");
             bonusLabel.className = "inline-bonus-icon";
-            bonusLabel.textContent = "🃏";
+            bonusLabel.textContent = "추가";
             const bonusInput = makeLostInput(
               `lost-bonus-r${r}-p${p}`,
               0,
