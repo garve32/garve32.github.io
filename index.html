@@ -49,6 +49,12 @@
         --chip: #f0e7dc;
       }
 
+      body.theme-parks {
+        --primary: #356b4c;
+        --danger: #9b4939;
+        --chip: #e4eee6;
+      }
+
       * {
         box-sizing: border-box;
       }
@@ -183,18 +189,13 @@
         position: sticky;
         top: 8px;
         z-index: 20;
-        display: flex;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
         padding: 5px;
-        overflow-x: auto;
-        scrollbar-width: none;
         background: color-mix(in srgb, var(--card) 76%, transparent);
         backdrop-filter: blur(16px) saturate(135%);
         -webkit-backdrop-filter: blur(16px) saturate(135%);
-      }
-
-      .game-tabs::-webkit-scrollbar {
-        display: none;
       }
 
       .tab-btn {
@@ -210,7 +211,6 @@
         font-size: 13px;
         font-weight: 700;
         box-shadow: var(--shadow-soft);
-        flex: 1 0 104px;
         white-space: nowrap;
       }
 
@@ -745,6 +745,109 @@
         line-height: 1;
       }
 
+      .parks-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .parks-field {
+        min-width: 0;
+        display: grid;
+        gap: 3px;
+      }
+
+      .parks-field.wide {
+        grid-column: 1 / -1;
+      }
+
+      .parks-park-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .parks-park-cell {
+        min-width: 0;
+        display: grid;
+        gap: 2px;
+      }
+
+      .parks-park-cell span {
+        color: var(--muted);
+        font-size: 9px;
+        font-weight: 700;
+        line-height: 1;
+        text-align: center;
+      }
+
+      .parks-field label,
+      .parks-photo-label {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-align: center;
+      }
+
+      .parks-field input[type="number"] {
+        height: 30px;
+        padding: 3px 4px;
+        font-size: 16px;
+      }
+
+      .parks-photo-wrap {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .parks-photo-field {
+        grid-column: span 2;
+      }
+
+      .parks-photo-bonus {
+        min-width: 42px;
+        border: 1px solid #9fc0ab;
+        border-radius: 3px;
+        padding: 5px 4px;
+        background: #e8f2eb;
+        color: #285a3e;
+        font-size: 11px;
+        font-weight: 800;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .parks-toggle {
+        position: relative;
+        min-height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--line-strong);
+        border-radius: 3px;
+        background: #fff;
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .parks-toggle input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .parks-toggle:has(input:checked) {
+        border-color: var(--primary);
+        background: color-mix(in srgb, var(--primary) 13%, white);
+        color: var(--primary);
+        box-shadow: 1px 1px 0 rgba(23, 26, 24, 0.18);
+      }
+
       .player-header {
         display: flex;
         align-items: center;
@@ -810,6 +913,14 @@
         --p-strong-text: #ffffff;
       }
 
+      .player-theme-5 {
+        --p-bg: #e7f5ed;
+        --p-border: #abd8bd;
+        --p-text: #276846;
+        --p-strong: #28734c;
+        --p-strong-text: #ffffff;
+      }
+
       .score-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -860,6 +971,21 @@
 
         .game-tabs {
           top: 12px;
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .tab-btn {
+          font-size: 11px;
+        }
+      }
+
+      @media (orientation: landscape) and (min-width: 640px) {
+        .game-tabs {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .tab-btn {
+          font-size: 11px;
         }
       }
 
@@ -1115,11 +1241,8 @@
   <body>
     <div class="wrap">
       <section class="panel game-tabs">
-        <button id="tabCastle" type="button" class="tab-btn active">
-          캐슬콤보
-        </button>
-        <button id="tabLostCity" type="button" class="tab-btn">
-          로스트시티
+        <button id="tabRenaissance" type="button" class="tab-btn">
+          르네상스의 거장들
         </button>
         <button id="tabHarmonies" type="button" class="tab-btn">
           하모니즈
@@ -1127,8 +1250,14 @@
         <button id="tabCentury" type="button" class="tab-btn">
           센추리:골렘
         </button>
-        <button id="tabRenaissance" type="button" class="tab-btn">
-          르네상스의 거장들
+        <button id="tabCastle" type="button" class="tab-btn active">
+          캐슬콤보
+        </button>
+        <button id="tabLostCity" type="button" class="tab-btn">
+          로스트시티
+        </button>
+        <button id="tabParks" type="button" class="tab-btn">
+          파크스
         </button>
       </section>
 
@@ -1287,6 +1416,39 @@
           </button>
         </div>
       </section>
+
+      <section id="pageParks" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <select id="parksPlayerCount" aria-label="플레이어 수">
+              <option value="1">1인</option>
+              <option value="2" selected>2인</option>
+              <option value="3">3인</option>
+              <option value="4">4인</option>
+              <option value="5">5인</option>
+            </select>
+          </div>
+          <div class="field">
+            <select id="parksRoundCount" aria-label="게임 기록 수">
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
+            </select>
+          </div>
+          <div class="field">
+            <button id="parksResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+
+        <section id="parksRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="parksAddRoundBtn" type="button" class="round-add-btn">
+            게임 기록 추가 +
+          </button>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -1301,6 +1463,8 @@
         centRounds: 1,
         renaPlayers: 2,
         renaRounds: 1,
+        parksPlayers: 2,
+        parksRounds: 1,
       };
 
       const STORAGE_KEYS = {
@@ -1309,6 +1473,7 @@
         harmonies: "board-score-harmonies-v1",
         century: "board-score-century-v1",
         renaissance: "board-score-renaissance-v1",
+        parks: "board-score-parks-v1",
         ui: "board-score-ui-v1",
       };
 
@@ -1322,11 +1487,13 @@
       const tabHarmoniesEl = document.getElementById("tabHarmonies");
       const tabCenturyEl = document.getElementById("tabCentury");
       const tabRenaissanceEl = document.getElementById("tabRenaissance");
+      const tabParksEl = document.getElementById("tabParks");
       const pageCastleEl = document.getElementById("pageCastle");
       const pageLostCityEl = document.getElementById("pageLostCity");
       const pageHarmoniesEl = document.getElementById("pageHarmonies");
       const pageCenturyEl = document.getElementById("pageCentury");
       const pageRenaissanceEl = document.getElementById("pageRenaissance");
+      const pageParksEl = document.getElementById("pageParks");
       const lostPlayerCountEl = document.getElementById("lostPlayerCount");
       const lostRoundCountEl = document.getElementById("lostRoundCount");
       const lostResetBtnEl = document.getElementById("lostResetBtn");
@@ -1351,6 +1518,12 @@
       const renaAddRoundBtnEl = document.getElementById("renaAddRoundBtn");
       const renaRoundContainerEl =
         document.getElementById("renaRoundContainer");
+      const parksPlayerCountEl = document.getElementById("parksPlayerCount");
+      const parksRoundCountEl = document.getElementById("parksRoundCount");
+      const parksResetBtnEl = document.getElementById("parksResetBtn");
+      const parksAddRoundBtnEl = document.getElementById("parksAddRoundBtn");
+      const parksRoundContainerEl =
+        document.getElementById("parksRoundContainer");
 
       const GAME_DEFS = {
         castle: {
@@ -1407,6 +1580,17 @@
           roundCountEl: renaRoundCountEl,
           addRoundBtnEl: renaAddRoundBtnEl,
           roundContainerEl: renaRoundContainerEl,
+          valueSelector: 'input[type="number"], input[type="checkbox"]',
+        },
+        parks: {
+          statePlayersKey: "parksPlayers",
+          stateRoundsKey: "parksRounds",
+          storageKey: STORAGE_KEYS.parks,
+          pageEl: pageParksEl,
+          playerCountEl: parksPlayerCountEl,
+          roundCountEl: parksRoundCountEl,
+          addRoundBtnEl: parksAddRoundBtnEl,
+          roundContainerEl: parksRoundContainerEl,
           valueSelector: 'input[type="number"], input[type="checkbox"]',
         },
       };
@@ -1552,7 +1736,8 @@
         if (className) input.className = className;
         if (placeholder) input.placeholder = placeholder;
         input.value = "0";
-        input.inputMode = "numeric";
+        input.setAttribute("inputmode", "numeric");
+        input.setAttribute("pattern", "[0-9]*");
         bindSelectAll(input);
         if (onInput) input.addEventListener("input", onInput);
         return input;
@@ -1935,6 +2120,75 @@
         return total;
       }
 
+      function getParksPhotoBonus(r, p) {
+        if (state.parksPlayers <= 1) return 0;
+        const photoCounts = [];
+        for (let player = 1; player <= state.parksPlayers; player++) {
+          photoCounts.push(
+            getNormalizedValueById(`parks-photos-r${r}-p${player}`, { min: 0 }),
+          );
+        }
+        const rankedCounts = [...new Set(photoCounts)].sort((a, b) => b - a);
+        const photos = photoCounts[p - 1];
+        if (photos <= 0) return 0;
+        if (photos === rankedCounts[0]) {
+          return state.parksPlayers === 2 ? 3 : 4;
+        }
+        if (state.parksPlayers >= 3 && photos === rankedCounts[1]) return 2;
+        return 0;
+      }
+
+      function getParksVisitedCount(r, p) {
+        let count = 0;
+        for (let park = 1; park <= 10; park++) {
+          if (
+            getNormalizedValueById(`parks-points-r${r}-p${p}-i${park}`, {
+              min: 0,
+            }) > 0
+          ) {
+            count += 1;
+          }
+        }
+        return count;
+      }
+
+      function computeParksRoundScore(r, p) {
+        const parkPoints = sumNormalizedRange(
+          1,
+          10,
+          (park) => `parks-points-r${r}-p${p}-i${park}`,
+          { min: 0 },
+        );
+        const visitedParks = getParksVisitedCount(r, p);
+        const photos = getNormalizedValueById(`parks-photos-r${r}-p${p}`, {
+          min: 0,
+        });
+        const photoBonus = getParksPhotoBonus(r, p);
+        const passion = getNormalizedValueById(`parks-passion-r${r}-p${p}`, {
+          min: 0,
+        });
+        const fallBonus = document.getElementById(
+          `parks-fall-r${r}-p${p}`,
+        ).checked
+          ? 3
+          : 0;
+        const firstHiker = document.getElementById(
+          `parks-first-r${r}-p${p}`,
+        ).checked
+          ? 1
+          : 0;
+        const total =
+          parkPoints + photos + photoBonus + passion + fallBonus + firstHiker;
+
+        setTextById(
+          `parks-parks-label-r${r}-p${p}`,
+          `방문한 공원 ${visitedParks}개 · ${parkPoints}점`,
+        );
+        setTextById(`parks-photo-bonus-r${r}-p${p}`, `보너스 +${photoBonus}`);
+        setTextById(`parks-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
       const GAME_RECALC_DEFS = {
         castle: {
           getRoundCount: () => state.rounds,
@@ -1966,6 +2220,13 @@
           metaPrefix: "rena-round-meta-r",
           computeScore: computeRenaissanceRoundScore,
           tieBreakByPlayer: getRenaissanceResourceCount,
+        },
+        parks: {
+          getRoundCount: () => state.parksRounds,
+          getPlayerCount: () => state.parksPlayers,
+          metaPrefix: "parks-round-meta-r",
+          computeScore: computeParksRoundScore,
+          tieBreakByPlayer: getParksVisitedCount,
         },
       };
 
@@ -2050,11 +2311,11 @@
       }
 
       const HARM_LANDSCAPES = [
-        { key: "mountain", label: "산", cls: "mountain" },
-        { key: "tree", label: "나무", cls: "tree" },
-        { key: "field", label: "들판", cls: "field" },
-        { key: "river", label: "강", cls: "river" },
-        { key: "building", label: "건물", cls: "building" },
+        { key: "tree", label: "나무", cls: "tree", scoreIndex: 1 },
+        { key: "mountain", label: "산", cls: "mountain", scoreIndex: 0 },
+        { key: "field", label: "들판", cls: "field", scoreIndex: 2 },
+        { key: "building", label: "건물", cls: "building", scoreIndex: 4 },
+        { key: "river", label: "강", cls: "river", scoreIndex: 3 },
       ];
       const HARM_ANIMAL_INPUTS = 9;
 
@@ -2100,7 +2361,7 @@
             const landCol = document.createElement("div");
             landCol.className = "harm-col";
 
-            HARM_LANDSCAPES.forEach((item, idx) => {
+            HARM_LANDSCAPES.forEach((item) => {
               const row = document.createElement("div");
               row.className = "harm-row";
 
@@ -2109,7 +2370,7 @@
               label.textContent = item.label;
 
               const input = createNumberInput({
-                id: `harm-land-r${r}-p${p}-c${idx}`,
+                id: `harm-land-r${r}-p${p}-c${item.scoreIndex}`,
                 onInput: recalculateHarmonies,
               });
 
@@ -2436,6 +2697,145 @@
         recalculateByGameDef("renaissance");
       }
 
+      function createParksField(labelText, input) {
+        const field = document.createElement("div");
+        field.className = "parks-field";
+        const label = document.createElement("label");
+        label.htmlFor = input.id;
+        label.textContent = labelText;
+        field.appendChild(label);
+        field.appendChild(input);
+        return field;
+      }
+
+      function createParksToggle(id, labelText) {
+        const label = document.createElement("label");
+        label.className = "parks-toggle";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.addEventListener("change", () => {
+          if (input.checked && id.startsWith("parks-first-")) {
+            const round = id.match(/-r(\d+)-/)?.[1];
+            parksRoundContainerEl
+              .querySelectorAll(`input[id^="parks-first-r${round}-"]`)
+              .forEach((other) => {
+                if (other !== input) other.checked = false;
+              });
+          }
+          recalculateParks();
+        });
+        label.appendChild(input);
+        label.append(labelText);
+        return label;
+      }
+
+      function buildParksUI() {
+        const prevValues = collectValues(
+          parksRoundContainerEl,
+          'input[type="number"], input[type="checkbox"]',
+        );
+        parksRoundContainerEl.innerHTML = "";
+
+        for (let r = 1; r <= state.parksRounds; r++) {
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `parks-round-meta-r${r}`,
+            state.parksPlayers,
+          );
+          roundPanel.querySelector(".round-title").textContent = `${r}게임`;
+
+          for (let p = 1; p <= state.parksPlayers; p++) {
+            const { card, headRight } = createPlayerCardShell(p);
+            const total = document.createElement("div");
+            total.className = `round-total-chip player-theme-${p}`;
+            total.id = `parks-total-r${r}-p${p}`;
+            total.textContent = "합계 0점";
+            headRight.appendChild(total);
+
+            const grid = document.createElement("div");
+            grid.className = "parks-grid";
+            const parkField = document.createElement("div");
+            parkField.className = "parks-field wide";
+            const parkLabel = document.createElement("label");
+            parkLabel.id = `parks-parks-label-r${r}-p${p}`;
+            parkLabel.textContent = "방문한 공원 점수 (최대 10개)";
+            const parkGrid = document.createElement("div");
+            parkGrid.className = "parks-park-grid";
+            for (let park = 1; park <= 10; park++) {
+              const parkCell = document.createElement("div");
+              parkCell.className = "parks-park-cell";
+              const parkName = document.createElement("span");
+              parkName.textContent = `${park}`;
+              const parkInput = createNumberInput({
+                id: `parks-points-r${r}-p${p}-i${park}`,
+                min: 0,
+                onInput: recalculateParks,
+              });
+              parkInput.setAttribute("aria-label", `${park}번째 방문 공원 점수`);
+              parkCell.appendChild(parkName);
+              parkCell.appendChild(parkInput);
+              parkGrid.appendChild(parkCell);
+            }
+            parkField.appendChild(parkLabel);
+            parkField.appendChild(parkGrid);
+            grid.appendChild(parkField);
+
+            const photoInput = createNumberInput({
+              id: `parks-photos-r${r}-p${p}`,
+              min: 0,
+              onInput: recalculateParks,
+            });
+            const photoField = document.createElement("div");
+            photoField.className = "parks-field parks-photo-field";
+            const photoLabel = document.createElement("label");
+            photoLabel.htmlFor = photoInput.id;
+            photoLabel.textContent = "사진 수 (각 1점)";
+            const photoWrap = document.createElement("div");
+            photoWrap.className = "parks-photo-wrap";
+            const photoBonus = document.createElement("span");
+            photoBonus.className = "parks-photo-bonus";
+            photoBonus.id = `parks-photo-bonus-r${r}-p${p}`;
+            photoBonus.textContent = "보너스 +0";
+            photoWrap.appendChild(photoInput);
+            photoWrap.appendChild(photoBonus);
+            photoField.appendChild(photoLabel);
+            photoField.appendChild(photoWrap);
+            grid.appendChild(photoField);
+
+            grid.appendChild(
+              createParksField(
+                "버킷리스트 점수",
+                createNumberInput({
+                  id: `parks-passion-r${r}-p${p}`,
+                  min: 0,
+                  onInput: recalculateParks,
+                }),
+              ),
+            );
+            grid.appendChild(
+              createParksToggle(`parks-fall-r${r}-p${p}`, "가을 +3"),
+            );
+            grid.appendChild(
+              createParksToggle(`parks-first-r${r}-p${p}`, "선두 +1"),
+            );
+
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+
+          roundPanel.appendChild(playerGrid);
+          parksRoundContainerEl.appendChild(roundPanel);
+        }
+
+        applyValues(prevValues);
+        recalculateGame("parks");
+      }
+
+      function recalculateParks() {
+        recalculateByGameDef("parks");
+      }
+
       function buildLostUI() {
         const prevValues = collectValues(
           lostRoundContainerEl,
@@ -2588,6 +2988,12 @@
           tabEl: tabRenaissanceEl,
           resetSelector: 'input[type="number"], input[type="checkbox"]',
         },
+        parks: {
+          build: buildParksUI,
+          recalc: recalculateParks,
+          tabEl: tabParksEl,
+          resetSelector: 'input[type="number"], input[type="checkbox"]',
+        },
       };
 
       function buildGameUI(gameKey) {
@@ -2637,6 +3043,7 @@
       bindGameControls("harmonies", harmResetBtnEl);
       bindGameControls("century", centResetBtnEl);
       bindGameControls("renaissance", renaResetBtnEl);
+      bindGameControls("parks", parksResetBtnEl);
 
       function setActiveGame(gameKey) {
         Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
@@ -2675,7 +3082,8 @@
         storedUI?.activeGame === "lostcity" ||
         storedUI?.activeGame === "harmonies" ||
         storedUI?.activeGame === "century" ||
-        storedUI?.activeGame === "renaissance"
+        storedUI?.activeGame === "renaissance" ||
+        storedUI?.activeGame === "parks"
           ? storedUI.activeGame
           : "castle";
       setActiveGame(initialGame);
