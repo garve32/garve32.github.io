@@ -447,9 +447,9 @@
       }
 
       .harm-label.animal {
-        color: #1f6fa5;
-        background: #e8f5ff;
-        border-color: #b9ddf5;
+        color: #60476f;
+        background: #f0e9f2;
+        border-color: #cdbdd3;
       }
 
       .harm-row input {
@@ -1272,9 +1272,9 @@
           </div>
           <div class="field">
             <select id="roundCount">
-              <option value="1" selected>1라운드</option>
-              <option value="2">2라운드</option>
-              <option value="3">3라운드</option>
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
             </select>
           </div>
           <div class="field">
@@ -1287,7 +1287,7 @@
         <section id="roundContainer"></section>
         <div class="round-add-wrap">
           <button id="addRoundBtn" type="button" class="round-add-btn">
-            라운드 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1303,9 +1303,9 @@
           </div>
           <div class="field">
             <select id="lostRoundCount">
-              <option value="1" selected>1라운드</option>
-              <option value="2">2라운드</option>
-              <option value="3">3라운드</option>
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
             </select>
           </div>
           <div class="field">
@@ -1318,7 +1318,7 @@
         <section id="lostRoundContainer"></section>
         <div class="round-add-wrap">
           <button id="lostAddRoundBtn" type="button" class="round-add-btn">
-            라운드 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1335,9 +1335,9 @@
           </div>
           <div class="field">
             <select id="harmRoundCount">
-              <option value="1" selected>1라운드</option>
-              <option value="2">2라운드</option>
-              <option value="3">3라운드</option>
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
             </select>
           </div>
           <div class="field">
@@ -1350,7 +1350,7 @@
         <section id="harmRoundContainer"></section>
         <div class="round-add-wrap">
           <button id="harmAddRoundBtn" type="button" class="round-add-btn">
-            라운드 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1366,9 +1366,9 @@
           </div>
           <div class="field">
             <select id="centRoundCount">
-              <option value="1" selected>1라운드</option>
-              <option value="2">2라운드</option>
-              <option value="3">3라운드</option>
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
             </select>
           </div>
           <div class="field">
@@ -1381,7 +1381,7 @@
         <section id="centRoundContainer"></section>
         <div class="round-add-wrap">
           <button id="centAddRoundBtn" type="button" class="round-add-btn">
-            라운드 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1412,7 +1412,7 @@
         <section id="renaRoundContainer"></section>
         <div class="round-add-wrap">
           <button id="renaAddRoundBtn" type="button" class="round-add-btn">
-            게임 기록 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1445,7 +1445,7 @@
         <section id="parksRoundContainer"></section>
         <div class="round-add-wrap">
           <button id="parksAddRoundBtn" type="button" class="round-add-btn">
-            게임 기록 추가 +
+            게임 추가 +
           </button>
         </div>
       </section>
@@ -1878,7 +1878,7 @@
 
         const title = document.createElement("h2");
         title.className = "round-title";
-        title.textContent = `${round}R`;
+        title.textContent = `${round}게임`;
         roundHead.appendChild(title);
 
         const roundMeta = document.createElement("div");
