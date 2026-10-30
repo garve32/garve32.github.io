@@ -4,1239 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>보드게임 점수 계산기</title>
-    <style>
-      :root {
-        --bg: #e7e9e5;
-        --card: #fafbf8;
-        --line: #aeb3ad;
-        --line-strong: #777d77;
-        --text: #171a18;
-        --muted: #626862;
-        --primary: #26312b;
-        --danger: #a23b32;
-        --chip: #eceee9;
-        --shadow: none;
-        --shadow-soft: 2px 2px 0 rgba(23, 26, 24, 0.12);
-      }
-
-      body.theme-castle {
-        --primary: #287695;
-        --danger: #a94436;
-        --chip: #e7f0f2;
-      }
-
-      body.theme-lost {
-        --primary: #b5651d;
-        --danger: #285789;
-        --chip: #f2e9dc;
-      }
-
-      body.theme-harmonies {
-        --primary: #277c63;
-        --danger: #a84638;
-        --chip: #e4efe9;
-      }
-
-      body.theme-century {
-        --primary: #584aa5;
-        --danger: #a43f66;
-        --chip: #ece8f2;
-      }
-
-      body.theme-renaissance {
-        --primary: #8d3e35;
-        --danger: #8d3e35;
-        --chip: #f0e7dc;
-      }
-
-      body.theme-parks {
-        --primary: #356b4c;
-        --danger: #9b4939;
-        --chip: #e4eee6;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family:
-          "Pretendard", "Noto Sans KR", "Segoe UI", Arial, sans-serif;
-        background: var(--bg);
-        color: var(--text);
-        padding: 8px;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-        transition:
-          background 0.25s ease,
-          color 0.25s ease;
-      }
-
-      .wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        min-width: 0;
-      }
-
-      .title {
-        margin: 0 0 4px;
-        font-size: 24px;
-      }
-
-      .sub {
-        margin: 0 0 14px;
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .panel {
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        padding: 10px;
-        box-shadow: var(--shadow);
-        margin-bottom: 6px;
-        transition:
-          border-color 0.2s ease,
-          box-shadow 0.2s ease,
-          background 0.2s ease;
-      }
-
-      .controls {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        align-items: end;
-        padding: 4px;
-      }
-
-      .field {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        min-width: 0;
-      }
-
-      label {
-        font-size: 11px;
-        color: var(--muted);
-      }
-
-      select,
-      input {
-        width: 100%;
-        min-width: 0;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 10px;
-        font-size: 16px;
-        background: color-mix(in srgb, var(--card) 92%, white 8%);
-        color: var(--text);
-        transition:
-          border-color 0.2s ease,
-          box-shadow 0.2s ease,
-          background 0.2s ease;
-      }
-
-      select:focus,
-      input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px
-          color-mix(in srgb, var(--primary) 18%, transparent);
-      }
-
-      input[type="number"] {
-        text-align: center;
-        font-weight: 600;
-      }
-
-      button {
-        border: 0;
-        border-radius: 12px;
-        padding: 11px 12px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        transition:
-          transform 0.12s ease,
-          box-shadow 0.2s ease,
-          background 0.2s ease,
-          color 0.2s ease;
-      }
-
-      button:active {
-        transform: translateY(1px);
-      }
-
-      .controls select,
-      .controls button {
-        height: 34px;
-        padding: 4px 6px;
-        font-size: 12px;
-        border-radius: 10px;
-      }
-
-      .btn-danger {
-        background: var(--danger);
-        color: #fff;
-        box-shadow: var(--shadow-soft);
-      }
-
-      .game-tabs {
-        position: sticky;
-        top: 8px;
-        z-index: 20;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        padding: 5px;
-        background: color-mix(in srgb, var(--card) 76%, transparent);
-        backdrop-filter: blur(16px) saturate(135%);
-        -webkit-backdrop-filter: blur(16px) saturate(135%);
-      }
-
-      .tab-btn {
-        border: 1px solid var(--line);
-        background: color-mix(in srgb, var(--card) 90%, white 10%);
-        color: var(--muted);
-        height: 34px;
-        padding: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 700;
-        box-shadow: var(--shadow-soft);
-        white-space: nowrap;
-      }
-
-      .tab-btn.active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-        box-shadow: 0 8px 18px
-          color-mix(in srgb, var(--primary) 36%, transparent);
-      }
-
-      .game-page {
-        display: none;
-      }
-
-      .game-page.active {
-        display: block;
-      }
-
-      .lost-grid {
-        display: grid;
-        gap: 4px;
-      }
-
-      .lost-row {
-        display: grid;
-        grid-template-columns: 46px 60px minmax(116px, 1fr) 36px 56px;
-        gap: 3px;
-        align-items: center;
-      }
-
-      .lost-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        padding: 2px 4px;
-      }
-
-      .lost-label.zone-1 {
-        color: #8a6500;
-        background: #fff3bf;
-        border-color: #f1d36d;
-      }
-
-      .lost-row.zone-1 {
-        --lost-zone-accent: #e0bf62;
-        --lost-zone-accent-text: #ffffff;
-      }
-
-      .lost-label.zone-2 {
-        color: #0f6071;
-        background: #d9f4f8;
-        border-color: #81d2dd;
-      }
-
-      .lost-row.zone-2 {
-        --lost-zone-accent: #58accb;
-        --lost-zone-accent-text: #ffffff;
-      }
-
-      .lost-label.zone-3 {
-        color: #5f3f9f;
-        background: #efe6ff;
-        border-color: #cbb0ff;
-      }
-
-      .lost-row.zone-3 {
-        --lost-zone-accent: #8d72bc;
-        --lost-zone-accent-text: #ffffff;
-      }
-
-      .lost-label.zone-4 {
-        color: #2f7a2f;
-        background: #e5f5e5;
-        border-color: #b7dfb7;
-      }
-
-      .lost-row.zone-4 {
-        --lost-zone-accent: #68ad6f;
-        --lost-zone-accent-text: #ffffff;
-      }
-
-      .lost-label.zone-5 {
-        color: #a45a18;
-        background: #ffe7cf;
-        border-color: #f2c79d;
-      }
-
-      .lost-row.zone-5 {
-        --lost-zone-accent: #c96a5f;
-        --lost-zone-accent-text: #ffffff;
-      }
-
-      .lost-row input {
-        padding: 3px 4px;
-        font-size: 16px;
-      }
-
-      .lost-sum-input {
-        font-size: 16px;
-        padding: 2px 4px;
-      }
-
-      .lost-wager-group {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 2px;
-        padding: 1px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #f8f9fd;
-      }
-
-      .lost-wager-btn {
-        border: 0;
-        border-radius: 6px;
-        height: 24px;
-        padding: 0;
-        font-size: 12px;
-        font-weight: 700;
-        background: transparent;
-        color: var(--muted);
-      }
-
-      .lost-wager-btn.active {
-        background: var(--lost-zone-accent, var(--primary));
-        color: var(--lost-zone-accent-text, #fff);
-      }
-
-      .lost-toggle {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .lost-toggle input {
-        width: 15px;
-        height: 15px;
-        margin: 0;
-      }
-
-      .lost-exp-score {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: #f6f8fd;
-        font-size: 12px;
-        font-weight: 800;
-        text-align: center;
-        padding: 4px 3px;
-      }
-
-      .lost-guide-row {
-        display: grid;
-        grid-template-columns: 46px 60px minmax(116px, 1fr) 36px 56px;
-        gap: 3px;
-        align-items: center;
-        margin-bottom: 2px;
-      }
-
-      .lost-guide {
-        font-size: 10px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        line-height: 1.1;
-      }
-
-      .harm-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .harm-divider {
-        height: 1px;
-        background: color-mix(in srgb, var(--line) 90%, transparent);
-        margin: 2px 0;
-      }
-
-      .harm-col {
-        display: grid;
-        gap: 4px;
-        align-content: start;
-      }
-
-      .harm-row {
-        display: grid;
-        grid-template-columns: 52px 1fr;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .harm-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        padding: 2px 4px;
-      }
-
-      .harm-label.mountain {
-        color: #5d646e;
-        background: #eceff3;
-        border-color: #c8ced8;
-      }
-
-      .harm-label.tree {
-        color: #2f7a2f;
-        background: #e5f5e5;
-        border-color: #b7dfb7;
-      }
-
-      .harm-label.field {
-        color: #8a6400;
-        background: #fff3b8;
-        border-color: #f4d35f;
-      }
-
-      .harm-label.river {
-        color: #0f6071;
-        background: #d9f4f8;
-        border-color: #81d2dd;
-      }
-
-      .harm-label.building {
-        color: #a9172e;
-        background: #ffd8dd;
-        border-color: #ff9aaa;
-      }
-
-      .harm-label.animal {
-        color: #60476f;
-        background: #f0e9f2;
-        border-color: #cdbdd3;
-      }
-
-      .harm-row input {
-        padding: 3px 4px;
-        font-size: 16px;
-      }
-
-      .cent-grid {
-        display: grid;
-        gap: 4px;
-        --cent-label-w: 74px;
-      }
-
-      .cent-row {
-        display: grid;
-        grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        align-items: center;
-      }
-
-      .cent-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        white-space: nowrap;
-        border-radius: 8px;
-        border: 1px solid transparent;
-        padding: 2px 4px;
-      }
-
-      .cent-label.card {
-        color: #2f4f78;
-        background: #deecff;
-        border-color: #9fc2f1;
-      }
-
-      .cent-label.gold {
-        color: #8a5500;
-        background: #ffe89a;
-        border-color: #e8bc40;
-      }
-
-      .cent-label.silver {
-        color: #4f5f6d;
-        background: #dde8f2;
-        border-color: #a8b8c7;
-      }
-
-      .cent-label.gem {
-        color: #5a2fb3;
-        background: #e8d8ff;
-        border-color: #b999ff;
-      }
-
-      .cent-grid input {
-        height: 26px;
-        padding: 3px 4px;
-      }
-
-      .cent-empty {
-        visibility: hidden;
-      }
-
-      .harm-sub-chip {
-        font-size: 12px;
-        border-radius: 999px;
-        padding: 4px 8px;
-        font-weight: 700;
-        color: var(--muted);
-        background: color-mix(in srgb, var(--card) 88%, var(--chip) 12%);
-        border: 1px solid var(--line);
-        white-space: nowrap;
-      }
-
-      .inline-bonus-icon {
-        font-size: 16px;
-        color: var(--muted);
-        font-weight: 700;
-        white-space: nowrap;
-        line-height: 1;
-      }
-
-      .inline-bonus-input {
-        width: 52px;
-        min-width: 52px;
-        height: 26px;
-        padding: 3px 4px;
-        font-size: 16px;
-        border-radius: 12px;
-      }
-
-      .round-block + .round-block {
-        margin-top: 14px;
-      }
-
-      .round-add-wrap {
-        margin: 8px 0 12px;
-      }
-
-      .round-add-btn {
-        height: 34px;
-        border: 1px dashed var(--line);
-        background: color-mix(in srgb, var(--card) 92%, white 8%);
-        color: var(--muted);
-        font-size: 13px;
-        padding: 0;
-        line-height: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .round-add-btn:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      .round-title {
-        margin: 0;
-        font-size: 16px;
-        flex: 0 0 auto;
-      }
-
-      .round-head {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 8px;
-      }
-
-      .round-meta {
-        display: flex;
-        flex-wrap: nowrap;
-        gap: 6px;
-        margin: 0;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-
-      .round-result-chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 2px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 3px 8px;
-        font-size: 12px;
-        font-weight: 700;
-        background: var(--p-bg, #f4f7ff);
-        border-color: var(--p-border, var(--line));
-        color: var(--p-text, #3352a7);
-      }
-
-      .crown-slot {
-        display: inline-block;
-        width: 1.1em;
-        text-align: center;
-        line-height: 1;
-        font-size: 12px;
-      }
-
-      .crown-slot.hidden {
-        visibility: hidden;
-      }
-
-      .round-result-chip.win {
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
-      }
-
-      .round-result-chip.lose {
-        opacity: 0.72;
-      }
-
-      .player-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
-
-      .player-card {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 8px;
-        background: #fff;
-        min-width: 0;
-      }
-
-      .rena-grid {
-        display: grid;
-        gap: 4px;
-        --rena-label-w: 74px;
-      }
-
-      .rena-row {
-        display: grid;
-        grid-template-columns: var(--rena-label-w) repeat(4, minmax(0, 1fr));
-        gap: 6px;
-        align-items: center;
-      }
-
-      .rena-label {
-        font-size: 12px;
-        font-weight: 700;
-        color: var(--muted);
-        text-align: center;
-        white-space: nowrap;
-        border: 1px solid transparent;
-        border-radius: 8px;
-        padding: 2px 4px;
-      }
-
-      .rena-label.card {
-        color: #71362f;
-        background: #f4ded6;
-        border-color: #d9a89b;
-      }
-
-      .rena-label.faith {
-        color: #7d2940;
-        background: #f5dce3;
-        border-color: #dca6b5;
-      }
-
-      .rena-label.resource {
-        color: #76521e;
-        background: #f5e6bd;
-        border-color: #d9bd77;
-      }
-
-      .rena-row input[type="number"] {
-        height: 26px;
-        padding: 3px 2px;
-      }
-
-      .rena-empty {
-        visibility: hidden;
-      }
-
-      .rena-pope-group {
-        grid-column: span 3;
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .rena-pope {
-        position: relative;
-        min-height: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--line);
-        border-radius: 9px;
-        background: #fff;
-        color: var(--muted);
-        font-size: 12px;
-        font-weight: 800;
-        cursor: pointer;
-      }
-
-      .rena-pope input {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .rena-pope:has(input:checked) {
-        border-color: var(--primary);
-        background: color-mix(in srgb, var(--primary) 13%, white);
-        color: var(--primary);
-        box-shadow: inset 0 0 0 1px var(--primary);
-      }
-
-      .rena-sub-chip {
-        font-size: 11px;
-        font-weight: 800;
-        color: var(--muted);
-        white-space: nowrap;
-      }
-
-      .rena-resource-cell {
-        min-width: 0;
-        display: grid;
-        gap: 2px;
-      }
-
-      .rena-resource-name {
-        color: var(--muted);
-        font-size: 9px;
-        font-weight: 700;
-        text-align: center;
-        line-height: 1;
-      }
-
-      .parks-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .parks-field {
-        min-width: 0;
-        display: grid;
-        gap: 3px;
-      }
-
-      .parks-field.wide {
-        grid-column: 1 / -1;
-      }
-
-      .parks-park-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 4px;
-      }
-
-      .parks-park-cell {
-        min-width: 0;
-        display: grid;
-        gap: 2px;
-      }
-
-      .parks-park-cell span {
-        color: var(--muted);
-        font-size: 9px;
-        font-weight: 700;
-        line-height: 1;
-        text-align: center;
-      }
-
-      .parks-field label,
-      .parks-photo-label {
-        color: var(--muted);
-        font-size: 10px;
-        font-weight: 800;
-        line-height: 1.1;
-        text-align: center;
-      }
-
-      .parks-field input[type="number"] {
-        height: 30px;
-        padding: 3px 4px;
-        font-size: 16px;
-      }
-
-      .parks-photo-wrap {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 4px;
-        align-items: center;
-      }
-
-      .parks-photo-field {
-        grid-column: span 2;
-      }
-
-      .parks-photo-bonus {
-        min-width: 42px;
-        border: 1px solid #9fc0ab;
-        border-radius: 3px;
-        padding: 5px 4px;
-        background: #e8f2eb;
-        color: #285a3e;
-        font-size: 11px;
-        font-weight: 800;
-        text-align: center;
-        white-space: nowrap;
-      }
-
-      .parks-toggle {
-        position: relative;
-        min-height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid var(--line-strong);
-        border-radius: 3px;
-        background: #fff;
-        color: var(--muted);
-        font-size: 11px;
-        font-weight: 800;
-        cursor: pointer;
-      }
-
-      .parks-toggle input {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .parks-toggle:has(input:checked) {
-        border-color: var(--primary);
-        background: color-mix(in srgb, var(--primary) 13%, white);
-        color: var(--primary);
-        box-shadow: 1px 1px 0 rgba(23, 26, 24, 0.18);
-      }
-
-      .player-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 8px;
-      }
-
-      .player-name {
-        font-size: 13px;
-        font-weight: 800;
-        padding: 4px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--p-border, var(--line));
-        background: var(--p-bg, #f4f7ff);
-        color: var(--p-strong, var(--text));
-        line-height: 1;
-      }
-
-      .player-head-right {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
-
-      .round-total-chip {
-        font-size: 14px;
-        background: var(--p-strong, #1d3f95);
-        border-radius: 99px;
-        padding: 5px 10px;
-        font-weight: 800;
-        color: var(--p-strong-text, #ffffff);
-      }
-
-      .player-theme-1 {
-        --p-bg: #ffecee;
-        --p-border: #ffb9c0;
-        --p-text: #9e1f2f;
-        --p-strong: #c52a3d;
-        --p-strong-text: #ffffff;
-      }
-
-      .player-theme-2 {
-        --p-bg: #e9f2ff;
-        --p-border: #b9d3ff;
-        --p-text: #1f56a8;
-        --p-strong: #1f56a8;
-        --p-strong-text: #ffffff;
-      }
-
-      .player-theme-3 {
-        --p-bg: #fff4e7;
-        --p-border: #ffd7a8;
-        --p-text: #9a5a00;
-        --p-strong: #b96b00;
-        --p-strong-text: #ffffff;
-      }
-
-      .player-theme-4 {
-        --p-bg: #f4ecff;
-        --p-border: #d5c0ff;
-        --p-text: #6941a3;
-        --p-strong: #6941a3;
-        --p-strong-text: #ffffff;
-      }
-
-      .player-theme-5 {
-        --p-bg: #e7f5ed;
-        --p-border: #abd8bd;
-        --p-text: #276846;
-        --p-strong: #28734c;
-        --p-strong-text: #ffffff;
-      }
-
-      .score-grid {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 6px;
-        margin-bottom: 8px;
-      }
-
-      .score-grid input {
-        padding: 5px 3px;
-        font-size: 16px;
-      }
-
-      /* CastleCombo only: keep 16px text, compress vertical spacing */
-      #pageCastle .round-block + .round-block {
-        margin-top: 10px;
-      }
-
-      #pageCastle .player-grid {
-        gap: 7px;
-      }
-
-      #pageCastle .player-card {
-        padding: 8px;
-      }
-
-      #pageCastle .player-header {
-        margin-bottom: 6px;
-      }
-
-      #pageCastle .score-grid {
-        gap: 4px;
-        margin-bottom: 6px;
-      }
-
-      #pageCastle .score-grid input {
-        padding: 3px 2px;
-        font-size: 16px;
-      }
-
-      @media (min-width: 680px) {
-        body {
-          padding: 18px;
-        }
-
-        .controls {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
-        }
-
-        .game-tabs {
-          top: 12px;
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-
-        .tab-btn {
-          font-size: 11px;
-        }
-      }
-
-      @media (orientation: landscape) and (min-width: 640px) {
-        .game-tabs {
-          grid-template-columns: repeat(6, minmax(0, 1fr));
-        }
-
-        .tab-btn {
-          font-size: 11px;
-        }
-      }
-
-      @media (max-width: 420px) {
-        .controls {
-          row-gap: 4px;
-          column-gap: 5px;
-        }
-
-        .lost-row {
-          grid-template-columns: 40px 52px minmax(96px, 1fr) 30px 50px;
-        }
-
-        .lost-guide-row {
-          grid-template-columns: 40px 52px minmax(96px, 1fr) 30px 50px;
-        }
-
-        .harm-row {
-          grid-template-columns: 44px 1fr;
-          gap: 4px;
-        }
-
-        .harm-grid {
-          gap: 3px;
-        }
-
-        .cent-row {
-          --cent-label-w: 68px;
-          grid-template-columns: var(--cent-label-w) repeat(3, minmax(0, 1fr));
-          gap: 4px;
-        }
-
-        .rena-grid {
-          --rena-label-w: 68px;
-        }
-
-        .rena-row {
-          gap: 4px;
-        }
-      }
-
-      /* Tablet (iPad) + phone landscape tablet-like optimization */
-      @media (min-width: 768px) and (max-width: 1199px),
-        (orientation: landscape) and (min-width: 640px) and (max-width: 767px) and (max-height: 500px) {
-        body {
-          padding: 12px;
-        }
-
-        .wrap {
-          max-width: 1024px;
-        }
-
-        .panel {
-          padding: 10px;
-        }
-
-        .player-grid {
-          gap: 8px;
-        }
-
-        .round-meta {
-          gap: 7px;
-        }
-
-        .lost-row {
-          grid-template-columns: 42px 54px minmax(104px, 1fr) 30px 48px;
-        }
-
-        .lost-guide-row {
-          grid-template-columns: 42px 54px minmax(104px, 1fr) 30px 48px;
-        }
-      }
-
-      @media (min-width: 1200px) {
-        body {
-          padding: 20px;
-        }
-
-        .wrap {
-          max-width: 1320px;
-        }
-
-        .panel {
-          padding: 12px;
-          margin-bottom: 10px;
-        }
-
-        .controls {
-          gap: 8px;
-          padding: 6px;
-        }
-
-        .controls select,
-        .controls button {
-          height: 36px;
-          font-size: 13px;
-        }
-
-        .round-meta {
-          gap: 8px;
-        }
-
-        .player-grid {
-          gap: 10px;
-        }
-      }
-
-      @media (min-width: 1600px) {
-        .wrap {
-          max-width: 1480px;
-        }
-      }
-
-      /* Industrial score-board skin: dense, flat and tactile. */
-      body {
-        letter-spacing: -0.01em;
-        transition: background 0.18s ease;
-      }
-
-      .panel {
-        border-color: var(--line);
-        border-radius: 6px;
-        box-shadow: none;
-      }
-
-      select,
-      input {
-        border-color: var(--line-strong);
-        border-radius: 3px;
-        background: #ffffff;
-      }
-
-      select:focus,
-      input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px
-          color-mix(in srgb, var(--primary) 24%, transparent);
-      }
-
-      input[type="number"],
-      .round-total-chip,
-      .round-result-chip,
-      .lost-exp-score,
-      .harm-sub-chip {
-        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-        font-variant-numeric: tabular-nums;
-        letter-spacing: 0;
-      }
-
-      button {
-        border-radius: 4px;
-      }
-
-      button:active {
-        transform: translate(1px, 1px);
-        box-shadow: none;
-      }
-
-      .controls select,
-      .controls button {
-        border-radius: 3px;
-      }
-
-      .btn-danger {
-        border: 1px solid color-mix(in srgb, var(--danger) 78%, black);
-        box-shadow: 2px 2px 0 rgba(23, 26, 24, 0.16);
-      }
-
-      .game-tabs {
-        background: #dfe2dd;
-        border-color: var(--line-strong);
-        box-shadow: 3px 3px 0 rgba(23, 26, 24, 0.12);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-      }
-
-      .tab-btn {
-        border-color: var(--line-strong);
-        border-radius: 3px;
-        background: #f8f9f6;
-        box-shadow: none;
-      }
-
-      .tab-btn.active {
-        border-color: color-mix(in srgb, var(--primary) 75%, black);
-        box-shadow: 2px 2px 0 color-mix(in srgb, var(--primary) 48%, black);
-      }
-
-      .player-card {
-        border-color: var(--line-strong);
-        border-radius: 4px;
-        background: #ffffff;
-      }
-
-      .player-name,
-      .round-total-chip,
-      .round-result-chip,
-      .harm-sub-chip {
-        border-radius: 3px;
-      }
-
-      .round-result-chip {
-        padding: 3px 6px;
-        background: #ffffff;
-      }
-
-      .round-result-chip.win {
-        border-color: var(--p-strong, var(--line-strong));
-        box-shadow: 2px 2px 0 color-mix(in srgb, var(--p-strong, #222) 22%, transparent);
-      }
-
-      .round-result-chip.lose {
-        opacity: 0.58;
-      }
-
-      .crown-slot {
-        width: auto;
-        min-width: 1.8em;
-        font-family: "Pretendard", "Noto Sans KR", sans-serif;
-        font-size: 9px;
-        font-weight: 800;
-      }
-
-      .round-add-btn {
-        border-radius: 3px;
-        background: #f8f9f6;
-      }
-
-      .lost-label,
-      .lost-wager-btn,
-      .lost-toggle,
-      .harm-label,
-      .cent-label,
-      .rena-label,
-      .rena-pope {
-        border-radius: 3px;
-      }
-
-      .lost-wager-btn.active,
-      .rena-pope:has(input:checked) {
-        box-shadow: 1px 1px 0 rgba(23, 26, 24, 0.18);
-      }
-
-      .inline-bonus-icon {
-        min-width: 2.5em;
-        font-family: "SFMono-Regular", Consolas, monospace;
-        font-size: 9px;
-        letter-spacing: 0.04em;
-        text-align: right;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="wrap">
@@ -1258,6 +26,9 @@
         </button>
         <button id="tabParks" type="button" class="tab-btn">
           파크스
+        </button>
+        <button id="tabRestore" type="button" class="tab-btn">
+          리스토어
         </button>
       </section>
 
@@ -1449,6 +220,33 @@
           </button>
         </div>
       </section>
+      <section id="pageRestore" class="game-page">
+        <section class="panel controls">
+          <div class="field">
+            <select id="restorePlayerCount" aria-label="플레이어 수" disabled>
+              <option value="2" selected>2인 전용</option>
+            </select>
+          </div>
+          <div class="field">
+            <select id="restoreRoundCount" aria-label="게임 기록 수">
+              <option value="1" selected>1게임</option>
+              <option value="2">2게임</option>
+              <option value="3">3게임</option>
+            </select>
+          </div>
+          <div class="field">
+            <button id="restoreResetBtn" type="button" class="btn-danger">
+              전체 점수 초기화
+            </button>
+          </div>
+        </section>
+        <section id="restoreRoundContainer"></section>
+        <div class="round-add-wrap">
+          <button id="restoreAddRoundBtn" type="button" class="round-add-btn">
+            게임 추가 +
+          </button>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -1465,6 +263,8 @@
         renaRounds: 1,
         parksPlayers: 2,
         parksRounds: 1,
+        restorePlayers: 2,
+        restoreRounds: 1,
       };
 
       const STORAGE_KEYS = {
@@ -1474,6 +274,7 @@
         century: "board-score-century-v1",
         renaissance: "board-score-renaissance-v1",
         parks: "board-score-parks-v1",
+        restore: "board-score-restore-v1",
         ui: "board-score-ui-v1",
       };
 
@@ -1526,6 +327,18 @@
         document.getElementById("parksRoundContainer");
 
       const GAME_DEFS = {
+        restore: {
+          fixedPlayers: 2,
+          statePlayersKey: "restorePlayers",
+          stateRoundsKey: "restoreRounds",
+          storageKey: STORAGE_KEYS.restore,
+          pageEl: document.getElementById("pageRestore"),
+          playerCountEl: document.getElementById("restorePlayerCount"),
+          roundCountEl: document.getElementById("restoreRoundCount"),
+          addRoundBtnEl: document.getElementById("restoreAddRoundBtn"),
+          roundContainerEl: document.getElementById("restoreRoundContainer"),
+          valueSelector: 'input[type="number"]',
+        },
         castle: {
           statePlayersKey: "players",
           stateRoundsKey: "rounds",
@@ -1661,7 +474,8 @@
       Object.entries(GAME_DEFS).forEach(([gameKey, game]) => {
         const stored = storedByGame[gameKey];
         if (stored?.settings) {
-          state[game.statePlayersKey] = Number(stored.settings.players) || 2;
+          state[game.statePlayersKey] =
+            game.fixedPlayers || Number(stored.settings.players) || 2;
           state[game.stateRoundsKey] = Math.min(
             3,
             Math.max(1, Number(stored.settings.rounds) || 1),
@@ -1850,25 +664,6 @@
         });
       }
 
-      function getResponsiveMaxColumns() {
-        const width = window.innerWidth || document.documentElement.clientWidth;
-        const height =
-          window.innerHeight || document.documentElement.clientHeight;
-        const isLandscapePhoneTabletLayout =
-          width >= 640 &&
-          width < 768 &&
-          height <= 500 &&
-          window.matchMedia("(orientation: landscape)").matches;
-        if (width >= 1400) return 4;
-        if (width >= 768 || isLandscapePhoneTabletLayout) return 2;
-        return 1;
-      }
-
-      function applyResponsiveGridColumns(gridEl, playerCount) {
-        const cols = Math.min(playerCount, getResponsiveMaxColumns());
-        gridEl.style.gridTemplateColumns = `repeat(${Math.max(1, cols)}, minmax(0, 1fr))`;
-      }
-
       function createRoundShell(round, metaId, playerCount) {
         const roundPanel = document.createElement("section");
         roundPanel.className = "panel round-block";
@@ -1889,7 +684,7 @@
 
         const playerGrid = document.createElement("div");
         playerGrid.className = "player-grid";
-        applyResponsiveGridColumns(playerGrid, playerCount);
+        playerGrid.dataset.playerCount = String(playerCount);
 
         return { roundPanel, playerGrid };
       }
@@ -2110,12 +905,6 @@
         const resourceScore = Math.floor(resources / 5);
         const total = development + faith + pope + leaders + resourceScore;
 
-        setTextById(`rena-dev-label-r${r}-p${p}`, `개발 ${development}`);
-        setTextById(
-          `rena-faith-label-r${r}-p${p}`,
-          `신앙 ${faith + pope}`,
-        );
-        setTextById(`rena-resource-label-r${r}-p${p}`, `자원 ${resourceScore}`);
         setTextById(`rena-total-r${r}-p${p}`, `합계 ${total}점`);
         return total;
       }
@@ -2190,6 +979,12 @@
       }
 
       const GAME_RECALC_DEFS = {
+        restore: {
+          getRoundCount: () => state.restoreRounds,
+          getPlayerCount: () => 2,
+          metaPrefix: "restore-round-meta-r",
+          computeScore: computeRestoreRoundScore,
+        },
         castle: {
           getRoundCount: () => state.rounds,
           getPlayerCount: () => state.players,
@@ -2602,7 +1397,7 @@
             developmentRow.className = "rena-row";
             developmentRow.appendChild(
               createRenaissanceLabel(
-                "개발 0",
+                "개발카드",
                 `rena-dev-label-r${r}-p${p}`,
                 "card",
               ),
@@ -2630,7 +1425,7 @@
             faithRow.className = "rena-row";
             faithRow.appendChild(
               createRenaissanceLabel(
-                "신앙 0",
+                "신앙",
                 `rena-faith-label-r${r}-p${p}`,
                 "faith",
               ),
@@ -2663,7 +1458,7 @@
             resourceRow.className = "rena-row";
             resourceRow.appendChild(
               createRenaissanceLabel(
-                "자원 0",
+                "자원",
                 `rena-resource-label-r${r}-p${p}`,
                 "resource",
               ),
@@ -2954,7 +1749,108 @@
         recalculateByGameDef("lostcity");
       }
 
+      const RESTORE_PARTS = [1, 2, 3, 4, 5];
+      const RESTORE_CATEGORIES = [
+        { key: "animal", label: "동물 그룹" },
+        { key: "forest", label: "숲" },
+        { key: "lake", label: "호수" },
+        { key: "purifier", label: "정화기" },
+        { key: "mission", label: "미션" },
+        { key: "tile", label: "타일" },
+      ];
+
+      function computeRestoreRoundScore(r, p) {
+        let total = 0;
+        RESTORE_CATEGORIES.forEach(({ key }) => {
+          const subtotal = sumNormalizedRange(
+            1,
+            RESTORE_PARTS.length,
+            (part) => `restore-${key}-r${r}-p${p}-i${part}`,
+          );
+          setTextById(`restore-${key}-subtotal-r${r}-p${p}`, `${subtotal}점`);
+          total += subtotal;
+        });
+        setTextById(`restore-total-r${r}-p${p}`, `합계 ${total}점`);
+        return total;
+      }
+
+      function recalculateRestore() {
+        recalculateByGameDef("restore");
+      }
+
+      function buildRestoreUI() {
+        const container = GAME_DEFS.restore.roundContainerEl;
+        const prevValues = collectValues(container, 'input[type="number"]');
+        container.innerHTML = "";
+
+        for (let r = 1; r <= state.restoreRounds; r++) {
+          const { roundPanel, playerGrid } = createRoundShell(
+            r,
+            `restore-round-meta-r${r}`,
+            2,
+          );
+          for (let p = 1; p <= 2; p++) {
+            const { card, headRight } = createPlayerCardShell(p);
+            const total = document.createElement("div");
+            total.className = `round-total-chip player-theme-${p}`;
+            total.id = `restore-total-r${r}-p${p}`;
+            total.textContent = "합계 0점";
+            headRight.appendChild(total);
+
+            const grid = document.createElement("div");
+            grid.className = "restore-grid";
+            const guide = document.createElement("div");
+            guide.className = "restore-row restore-guide";
+            ["점수 항목", ...RESTORE_PARTS.map((part) => `부분 ${part}`), "소계"].forEach((text) => {
+              const heading = document.createElement("span");
+              heading.textContent = text;
+              guide.appendChild(heading);
+            });
+            grid.appendChild(guide);
+
+            RESTORE_CATEGORIES.forEach(({ key, label }) => {
+              const row = document.createElement("div");
+              row.className = "restore-row";
+              const name = document.createElement("div");
+              name.className = `restore-label ${key}`;
+              name.textContent = label;
+              row.appendChild(name);
+              for (const part of RESTORE_PARTS) {
+                const input = createNumberInput({
+                  id: `restore-${key}-r${r}-p${p}-i${part}`,
+                  onInput: recalculateRestore,
+                });
+                input.setAttribute("aria-label", `${r}게임 ${p}P ${label} 부분 점수 ${part}`);
+                row.appendChild(input);
+              }
+              const subtotal = document.createElement("output");
+              subtotal.id = `restore-${key}-subtotal-r${r}-p${p}`;
+              subtotal.className = "restore-subtotal";
+              subtotal.setAttribute("aria-label", `${r}게임 ${p}P ${label} 소계`);
+              subtotal.htmlFor = RESTORE_PARTS
+                .map((part) => `restore-${key}-r${r}-p${p}-i${part}`)
+                .join(" ");
+              subtotal.textContent = "0점";
+              row.appendChild(subtotal);
+              grid.appendChild(row);
+            });
+            card.appendChild(grid);
+            playerGrid.appendChild(card);
+          }
+          roundPanel.appendChild(playerGrid);
+          container.appendChild(roundPanel);
+        }
+        applyValues(prevValues);
+        recalculateGame("restore");
+      }
+
       const GAME_RUNTIME = {
+        restore: {
+          build: buildRestoreUI,
+          recalc: recalculateRestore,
+          tabEl: document.getElementById("tabRestore"),
+          resetSelector: 'input[type="number"]',
+        },
         castle: {
           build: buildUI,
           recalc: recalculate,
@@ -3023,7 +1919,8 @@
       function bindGameControls(gameKey, resetButtonEl) {
         const game = GAME_DEFS[gameKey];
         game.playerCountEl.addEventListener("change", () => {
-          state[game.statePlayersKey] = Number(game.playerCountEl.value) || 2;
+          state[game.statePlayersKey] =
+            game.fixedPlayers || Number(game.playerCountEl.value) || 2;
           buildGameUI(gameKey);
         });
         game.roundCountEl.addEventListener("change", () => {
@@ -3044,6 +1941,7 @@
       bindGameControls("century", centResetBtnEl);
       bindGameControls("renaissance", renaResetBtnEl);
       bindGameControls("parks", parksResetBtnEl);
+      bindGameControls("restore", document.getElementById("restoreResetBtn"));
 
       function setActiveGame(gameKey) {
         Object.entries(GAME_RUNTIME).forEach(([key, runtime]) => {
@@ -3070,11 +1968,8 @@
       });
 
       window.addEventListener("resize", () => {
-        Object.entries(GAME_DEFS).forEach(([key, game]) => {
-          game.pageEl.querySelectorAll(".player-grid").forEach((grid) => {
-            applyResponsiveGridColumns(grid, state[game.statePlayersKey]);
-          });
-          GAME_RUNTIME[key].afterRestore?.();
+        Object.values(GAME_RUNTIME).forEach((runtime) => {
+          runtime.afterRestore?.();
         });
       });
 
@@ -3083,7 +1978,8 @@
         storedUI?.activeGame === "harmonies" ||
         storedUI?.activeGame === "century" ||
         storedUI?.activeGame === "renaissance" ||
-        storedUI?.activeGame === "parks"
+        storedUI?.activeGame === "parks" ||
+        storedUI?.activeGame === "restore"
           ? storedUI.activeGame
           : "castle";
       setActiveGame(initialGame);
